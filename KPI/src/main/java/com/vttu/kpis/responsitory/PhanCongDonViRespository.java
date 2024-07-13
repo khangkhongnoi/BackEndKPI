@@ -20,8 +20,10 @@ public interface PhanCongDonViRespository extends JpaRepository<PhanCongDonVi, L
     @Query("SELECT pcdv FROM PhanCongDonVi pcdv WHERE pcdv.donVi.madonvi =:maDonVi ")
     List<PhanCongDonVi> getDonVi(int maDonVi);
 
-    @Query("SELECT COUNT(pcdv) FROM PhanCongDonVi pcdv where pcdv.congViec.macongviec = :maCongViec AND pcdv.donVi.madonvi =:maDonVi")
-    long countByCheckTruocKhiXoa(String maCongViec, int maDonVi);
+    @Query(value = "select count(*) from cong_viec \n" +
+            "join nhan_vien on cong_viec.ma_nguoitao = nhan_vien.manhanvien\n" +
+            "where nhan_vien.ma_donvi = :maDonVi and cong_viec.macongvieccha = :maCongViec",nativeQuery = true)
+    long countByCheckTruocKhiXoa(@Param("maCongViec") String maCongViec,@Param("maDonVi") int maDonVi);
 
     @Query("SELECT pcdv FROM PhanCongDonVi pcdv where pcdv.congViec.macongviec = :maCongViec AND pcdv.donVi.madonvi =:maDonVi")
     PhanCongDonVi listPhanCongCongViecByMaCongViecAnMaDonVi(String maCongViec, int maDonVi);
