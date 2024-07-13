@@ -148,7 +148,7 @@ public class CongViecController {
     }
     @PutMapping("/{macongviec}")
    ApiResponse<CongViecResponse> updateCongViec(
-            @PathVariable UUID macongviec,
+            @PathVariable String macongviec,
             @RequestBody @Valid CongViecRequest congViecRequest) {
 
         try {

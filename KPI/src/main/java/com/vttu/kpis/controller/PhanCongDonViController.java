@@ -32,25 +32,25 @@ public class PhanCongDonViController {
     PhanCongDonViService phanCongDonViService;
     HttpServletRequest request;
     AuthenticationService authenticationService;
-    @PostMapping("/checkdonvitaocongviec")
-    ApiResponse<Boolean> check (@RequestBody CheckDonViCoTaoCongViec checkDonViCoTaoCongViec){
-
-        try{
-            if(CheckToken.CheckHanToKen(request, authenticationService)){
-                return ApiResponse.<Boolean>builder()
-                        .result(congViecService.CheckDonVi(checkDonViCoTaoCongViec.getMacongviec(),checkDonViCoTaoCongViec.getMadonvi()))
-                        .build();
-            }else {
-                return ApiResponse.<Boolean>builder()
-                        .code(HttpStatus.UNAUTHORIZED.value())
-                        .build();
-            }
-        }catch (ParseException | JOSEException e){
-            return ApiResponse.<Boolean>builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
-                    .build();
-        }
-    }
+//    @PostMapping("/checkdonvitaocongviec")
+//    ApiResponse<Boolean> check (@RequestBody CheckDonViCoTaoCongViec checkDonViCoTaoCongViec){
+//
+//        try{
+//            if(CheckToken.CheckHanToKen(request, authenticationService)){
+//                return ApiResponse.<Boolean>builder()
+//                        .result(congViecService.CheckDonVi(checkDonViCoTaoCongViec.getMacongviec(),checkDonViCoTaoCongViec.getMadonvi()))
+//                        .build();
+//            }else {
+//                return ApiResponse.<Boolean>builder()
+//                        .code(HttpStatus.UNAUTHORIZED.value())
+//                        .build();
+//            }
+//        }catch (ParseException | JOSEException e){
+//            return ApiResponse.<Boolean>builder()
+//                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
+//                    .build();
+//        }
+//    }
 
 //    @GetMapping("/{madonvi}")
 //    ApiResponse<List<PhanCongDonViResponse>> getDonVi (@PathVariable int madonvi){

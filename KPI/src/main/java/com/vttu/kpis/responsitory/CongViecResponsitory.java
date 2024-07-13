@@ -13,19 +13,19 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
     boolean existsByTencongviec(String tencongviec);
 
     //check xem đơn vị có tạo công việc con hay chưa
-    @Query(value = "select COUNT(*) from cong_viec\n" +
-            "join phan_cong_don_vi on phan_cong_don_vi.ma_congviec = cong_viec.macongviec\n" +
-            " where\n" +
-            "macongvieccha = :macongviec and ma_donvi = :madonvi", nativeQuery = true)
-    int findbycongviec(@Param("macongviec") String macongviec, @Param("madonvi") int madonvi);
+//    @Query(value = "select COUNT(*) from cong_viec\n" +
+//            "join phan_cong_don_vi on phan_cong_don_vi.ma_congviec = cong_viec.macongviec\n" +
+//            " where\n" +
+//            "macongvieccha = :macongviec and ma_donvi = :madonvi", nativeQuery = true)
+//    int findbycongviec(@Param("macongviec") String macongviec, @Param("madonvi") int madonvi);
 
 
     //check xem những người trong ban lãnh đạo tạo công việc con hay chưa
-    @Query(value = "select COUNT(*) from cong_viec\n" +
-            "join phan_cong_lanh_dao on phan_cong_lanh_dao.ma_congviec = cong_viec.macongviec\n" +
-            " where\n" +
-            "macongvieccha = :macongviec and ma_nhanvien = :manhanvien", nativeQuery = true)
-    int SelectCountBanLanhDao(@Param("macongviec") String macongviec, @Param("manhanvien") int manhanvien);
+//    @Query(value = "select COUNT(*) from cong_viec\n" +
+//            "join phan_cong_lanh_dao on phan_cong_lanh_dao.ma_congviec = cong_viec.macongviec\n" +
+//            " where\n" +
+//            "macongvieccha = :macongviec and ma_nhanvien = :manhanvien", nativeQuery = true)
+//    int SelectCountBanLanhDao(@Param("macongviec") String macongviec, @Param("manhanvien") int manhanvien);
 
 
     @Query(value = "SELECT * FROM cong_viec\n" +

@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,4 +41,6 @@ public class PhanCongDonVi {
     @JoinColumn(name = "ma_quyen", nullable = false)
     @NotNull(message = "Quyền không được phép trống")
     Quyen quyen;
+
+    LocalDateTime thoigian;
 }

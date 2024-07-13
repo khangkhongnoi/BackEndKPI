@@ -12,4 +12,9 @@ public interface PhanCongLanhDaoRepository extends JpaRepository<PhanCongLanhDao
     @Modifying
     @Query("DELETE FROM PhanCongLanhDao pcls WHERE pcls.congViec.macongviec = :macongviec AND pcls.nhanVien.manhanvien = :manhanvien")
     void deleteByMaCongViecAndMaNhanVien(String macongviec, int manhanvien);
+    @Query("DELETE FROM PhanCongLanhDao pcls WHERE pcls.congViec.macongviec = :macongviec AND pcls.nhanVien.manhanvien = :manhanvien")
+    long countByCheckTruocKhiXoa(String macongviec, int manhanvien);
+
+    @Query("SELECT pcls FROM PhanCongLanhDao pcls WHERE pcls.congViec.macongviec = :macongviec AND pcls.nhanVien.manhanvien = :manhanvien")
+    PhanCongLanhDao listPhanCongLanhDaoByMaCongViecAnMaDonVi(String macongviec, int manhanvien);
 }

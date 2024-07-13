@@ -29,6 +29,7 @@ public enum ErrorCode {
     ErrorNgayBDConViecCon(1020, "Ngày bắt đầu công việc con không hợp lệ", HttpStatus.BAD_REQUEST),
     ErrorNgayKTConViecCon(1021, "Ngày kết thúc công việc con không hợp lệ", HttpStatus.BAD_REQUEST),
     XoaDonVi_PhanCong(1022, "Không thể xóa do đơn vị đã tạo công việc con", HttpStatus.BAD_REQUEST),
+
     ;
 
 

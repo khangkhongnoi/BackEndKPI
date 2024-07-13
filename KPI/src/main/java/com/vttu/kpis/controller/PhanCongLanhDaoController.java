@@ -30,27 +30,27 @@ public class PhanCongLanhDaoController {
     HttpServletRequest request;
     AuthenticationService authenticationService;
 
-    @PostMapping("/checkbanlanhdaotaocongviec")
-    ApiResponse<Boolean> checkbanlanhdao(@RequestBody CheckBanLanhDaoTaoCongViecRequest congViecRequest){
-        try{
-            if(CheckToken.CheckHanToKen(request,authenticationService)){
-                return ApiResponse.<Boolean>builder()
-                        .result(congViecService.CheckBanhLanhDaoTaoCongViec(congViecRequest.getMacongviec(),congViecRequest.getManhanvien()))
-                        .code(HttpStatus.OK.value())
-                        .build();
-            }else {
-                return ApiResponse.<Boolean>builder()
-                        .code(HttpStatus.UNAUTHORIZED.value())
-                        .build();
-            }
-        }catch (ParseException | JOSEException e){
-            e.printStackTrace();
-            return ApiResponse.<Boolean>builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .build();
-        }
-
-    }
+//    @PostMapping("/checkbanlanhdaotaocongviec")
+//    ApiResponse<Boolean> checkbanlanhdao(@RequestBody CheckBanLanhDaoTaoCongViecRequest congViecRequest){
+//        try{
+//            if(CheckToken.CheckHanToKen(request,authenticationService)){
+//                return ApiResponse.<Boolean>builder()
+//                        .result(congViecService.CheckBanhLanhDaoTaoCongViec(congViecRequest.getMacongviec(),congViecRequest.getManhanvien()))
+//                        .code(HttpStatus.OK.value())
+//                        .build();
+//            }else {
+//                return ApiResponse.<Boolean>builder()
+//                        .code(HttpStatus.UNAUTHORIZED.value())
+//                        .build();
+//            }
+//        }catch (ParseException | JOSEException e){
+//            e.printStackTrace();
+//            return ApiResponse.<Boolean>builder()
+//                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                    .build();
+//        }
+//
+//    }
 
 
 }
