@@ -25,7 +25,7 @@ public class CongViec {
     LocalDate ngaybatdau;
     LocalDate ngayketthucdukien;
     int trongso;
-    int trangthaicongviec;
+    //int trangthaicongviec;
     float phantramhoanthanh;
     String macongvieccha;
     int ma_nguoitao;
@@ -35,6 +35,10 @@ public class CongViec {
     @ManyToOne
     @JoinColumn(name = "ma_nhom", nullable = false)
     NhomMucTieu nhomMucTieu;
+
+    @ManyToOne
+    @JoinColumn(name = "ma_trangthai", nullable = false)
+    TrangThaiCongViec trangThaiCongViec;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ma_muctieu", nullable = false)
@@ -51,6 +55,14 @@ public class CongViec {
     @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<PhanCongLanhDao> phanCongLanhDaos;
+
+    @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    Set<PhanCongNhanVien> phanCongNhanViens;
+
+    @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    Set<PhanCongBoPhan> phanCongBoPhans;
 
     @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
     @JsonIgnore

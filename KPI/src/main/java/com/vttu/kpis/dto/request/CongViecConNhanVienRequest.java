@@ -2,6 +2,7 @@ package com.vttu.kpis.dto.request;
 
 import com.vttu.kpis.entity.DanhCho;
 import com.vttu.kpis.entity.NhomMucTieu;
+import com.vttu.kpis.entity.PhanCongNhanVien;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -46,4 +47,7 @@ public class CongViecConNhanVienRequest {
     DanhChoResquest danhCho;
     Set<PhanCongLanhDaoRequest> phanCongLanhDaos;
     Set<PhanCongDonViRequest> phanCongDonVis;
+    Set<PhanCongNhanVienRequest> phanCongNhanViens;
+    Set<PhanCongBoPhanRequest> phanCongBoPhans;
+
 }

@@ -29,7 +29,9 @@ public enum ErrorCode {
     ErrorNgayBDConViecCon(1020, "Ngày bắt đầu công việc con không hợp lệ", HttpStatus.BAD_REQUEST),
     ErrorNgayKTConViecCon(1021, "Ngày kết thúc công việc con không hợp lệ", HttpStatus.BAD_REQUEST),
     XoaDonVi_PhanCong(1022, "Không thể xóa do đơn vị đã tạo công việc con", HttpStatus.BAD_REQUEST),
-
+    TrangThai_NOT_EXISTED(1023, "Trạng thái không tồn tại",HttpStatus.BAD_REQUEST),
+    PhanCongBoPhanIsEmpty(1024, "Phân công bộ phận không được rỗng", HttpStatus.BAD_REQUEST),
+    BoPhan_NOT_EXISTED(1025, "Bộ phận không tồn tại",HttpStatus.BAD_REQUEST),
     ;
 
 

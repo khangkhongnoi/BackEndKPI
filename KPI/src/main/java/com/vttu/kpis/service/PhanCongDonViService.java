@@ -37,18 +37,27 @@ public class PhanCongDonViService {
         return phanCongDonViRespository.getDonVi(madonvi).stream().map(phanCongDonViMapper::toPhanCongDonViResponse).toList();
     }
 
-    public List<CongViecResponse> getCongViecTheoDonVi(int madonvi, int manhanvien){
+    public List<CongViecResponse> getCongViecTheoDonVi(int madonvi){
         donViResponsitory.findById(madonvi)
                 .orElseThrow(() -> new AppException(ErrorCode.DonVi_NOT_EXISTED));
-        nhanVienResponsitory.findById(manhanvien)
-                .orElseThrow(() -> new AppException(ErrorCode.NhanVien_NOT_FOUND));
-        return congViecResponsitory.getCongViecDonVi(madonvi,manhanvien).stream().map(congViecMapper::toCongViecResponse).toList();
+        return congViecResponsitory.getCongViecDonVi(madonvi).stream().map(congViecMapper::toCongViecResponse).toList();
     }
 
 
     public List<CongViecResponse> getCongViecByMaNguoiTao (int ma_nguoitao){
 
         return congViecResponsitory.findByMa_nguoitao(ma_nguoitao).stream().map(congViecMapper::toCongViecResponse).toList();
+
+    }
+    public List<CongViecResponse> getCongViecBymadonvi (int madonvi){
+
+        return congViecResponsitory.congviecphancongchodonvi(madonvi).stream().map(congViecMapper::toCongViecResponse).toList();
+
+    }
+
+    public List<CongViecResponse> getCongViecDonViByHieuTruongChucVuTruongDonViService (int madonvi){
+
+        return congViecResponsitory.getCongViecDonViByHieuTruongChucVuTruongDonVi(madonvi).stream().map(congViecMapper::toCongViecResponse).toList();
 
     }
 }

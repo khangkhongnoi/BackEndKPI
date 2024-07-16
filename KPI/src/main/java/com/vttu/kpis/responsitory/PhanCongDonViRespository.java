@@ -27,4 +27,6 @@ public interface PhanCongDonViRespository extends JpaRepository<PhanCongDonVi, L
 
     @Query("SELECT pcdv FROM PhanCongDonVi pcdv where pcdv.congViec.macongviec = :maCongViec AND pcdv.donVi.madonvi =:maDonVi")
     PhanCongDonVi listPhanCongCongViecByMaCongViecAnMaDonVi(String maCongViec, int maDonVi);
+
+
 }

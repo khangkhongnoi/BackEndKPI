@@ -1,5 +1,8 @@
 package com.vttu.kpis.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vttu.kpis.dto.request.PhanCongBoPhanRequest;
+import com.vttu.kpis.dto.request.PhanCongNhanVienRequest;
 import com.vttu.kpis.entity.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +23,7 @@ public class CongViecResponse {
     String tencongviec;
     LocalDate ngaybatdau;
     LocalDate ngayketthucdukien;
-    int trangthaicongviec;
+
     String macongvieccha;
     int trongso;
     float phantramhoanthanh;
@@ -30,7 +33,10 @@ public class CongViecResponse {
     DanhCho danhCho;
     MucTieu mucTieu;
     NhomMucTieu nhomMucTieu;
+    TrangThaiCongViec trangThaiCongViec;
     Set<PhanCongDonVi> phanCongDonVis;
     Set<PhanCongLanhDao> phanCongLanhDaos;
     Set<ChuyenTiepCongViecResponse> chuyenTiepCongViecs;
+    Set<PhanCongNhanVien> phanCongNhanViens;
+    Set<PhanCongBoPhan> phanCongBoPhans;
 }

@@ -78,7 +78,7 @@ public class PhanCongDonViController {
 
       else  {
             return ApiResponse.<List<CongViecResponse>>builder()
-                    .result(phanCongDonViService.getCongViecTheoDonVi(madonvi, manhanvien))
+                    .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
                     .build();
         }
     }

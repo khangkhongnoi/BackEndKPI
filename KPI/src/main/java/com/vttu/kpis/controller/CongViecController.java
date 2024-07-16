@@ -38,40 +38,37 @@ public class CongViecController {
     PhanCongDonViService phanCongDonViService;
     HttpServletRequest request;
     AuthenticationService authenticationService;
+
     @GetMapping
-    ApiResponse<List<CongViecResponse>> getCongViecDonVi (@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien){
+    ApiResponse<List<CongViecResponse>> getCongViecDonVi(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
 
-        try{
-            if(CheckToken.CheckHanToKen(request,authenticationService)){
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
 
-                if(machucvu == 5 || machucvu == 3){
+                if (machucvu == 5) {
 
                     return ApiResponse.<List<CongViecResponse>>builder()
                             .result(phanCongDonViService.getCongViecByMaNguoiTao(manhanvien))
                             .code(HttpStatus.OK.value())
                             .build();
-                }
+                } else if (machucvu == 1) {
 
-                else if(machucvu == 1){
-
-                    return  ApiResponse.<List<CongViecResponse>>builder()
+                    return ApiResponse.<List<CongViecResponse>>builder()
                             .message("Bạn không có quyền truy cập")
                             .code(HttpStatus.FORBIDDEN.value())
                             .build();
-                }
-
-                else  {
+                } else {
                     return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi, manhanvien))
+                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
                             .code(HttpStatus.OK.value())
                             .build();
                 }
-            }else  {
+            } else {
                 return ApiResponse.<List<CongViecResponse>>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .build();
             }
-        }catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<List<CongViecResponse>>builder()
                     .message("Internal Server Error!")
@@ -81,39 +78,34 @@ public class CongViecController {
     }
 
     @GetMapping("/duocgiao")
-    ApiResponse<List<CongViecResponse>> getCongViecDonViDuocGiao (@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien){
+    ApiResponse<List<CongViecResponse>> getCongViecDonViDuocGiao(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
 
-        try{
-            if(CheckToken.CheckHanToKen(request,authenticationService)){
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
 
-                if(machucvu == 5){
+                if (machucvu == 3) {
 
                     return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(phanCongDonViService.getCongViecByMaNguoiTao(manhanvien))
+                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
+                            .code(HttpStatus.OK.value())
+                            .build();
+                }else if(machucvu == 6){
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .result(congViecService.getCongViecBanLanhDaoService(manhanvien))
                             .code(HttpStatus.OK.value())
                             .build();
                 }
-
-                else if(machucvu == 1){
-
-                    return  ApiResponse.<List<CongViecResponse>>builder()
-                            .message("Bạn không có quyền truy cập")
-                            .code(HttpStatus.FORBIDDEN.value())
-                            .build();
-                }
-
-                else  {
+                else {
                     return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi, manhanvien))
-                            .code(HttpStatus.OK.value())
+                            .code(HttpStatus.UNAUTHORIZED.value())
                             .build();
                 }
-            }else  {
+            } else {
                 return ApiResponse.<List<CongViecResponse>>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .build();
             }
-        }catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<List<CongViecResponse>>builder()
                     .message("Internal Server Error!")

@@ -27,7 +27,7 @@ public class SecurityConfig {
             "/auth/log-in","auth/token-theo-chuc-vu/**","/auth/introspect",
     };
     private final  String [] PUBLIC_GET = {
-            "/taikhoan/**", "/quyen"
+            "/taikhoan/**", "/quyen", "/trangthai"
     };
 
     @Value("${jwt.signerKey}")

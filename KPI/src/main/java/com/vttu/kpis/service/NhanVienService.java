@@ -46,4 +46,8 @@ public class NhanVienService {
 
         return nhanVienResponsitory.getNhanVienDonVi(madonvi).stream().map(nhanVienMapper::toNhanVienResponse).toList();
     }
+
+    public List<NhanVienResponse> getAllNhanVienService(){
+        return nhanVienResponsitory.findAll().stream().map(nhanVienMapper::toNhanVienResponse).toList();
+    }
 }

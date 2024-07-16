@@ -1,9 +1,7 @@
 package com.vttu.kpis.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vttu.kpis.dto.request.DanhChoResquest;
-import com.vttu.kpis.dto.request.PhanCongDonViRequest;
-import com.vttu.kpis.dto.request.PhanCongLanhDaoRequest;
+import com.vttu.kpis.dto.request.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -41,4 +39,8 @@ public class CongViecConNhanVienResponse {
     Set<PhanCongLanhDaoRequest> phanCongLanhDaos;
     @JsonIgnore
     Set<PhanCongDonViRequest> phanCongDonVis;
+    @JsonIgnore
+    Set<PhanCongNhanVienRequest> phanCongNhanViens;
+    @JsonIgnore
+    Set<PhanCongBoPhanRequest> phanCongBoPhans;
 }

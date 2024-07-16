@@ -34,6 +34,7 @@ public class CongViecService {
     PhanCongDonViRespository phanCongDonViRepository;
     PhanCongLanhDaoRepository phanCongLanhDaoRepository;
     NhomMucTieuResponsitory nhomMucTieuResponsitory;
+    TrangThaiCongViecResponsitory trangThaiCongViecResponsitory;
     public CongViecResponse createCongViec(CongViecRequest request){
         // Tạo đối tượng CongViec từ request
         CongViec congViec = congViecMapper.toCreateCongViec(request);
@@ -161,18 +162,20 @@ public class CongViecService {
     @Transactional(rollbackFor = Exception.class)
     public CongViecResponse updateCongViec(String macongviec, CongViecRequest request) {
         // Lấy đối tượng CongViec từ cơ sở dữ liệu dựa trên mã công việc
-        CongViec congViec = congViecResponsitory.findById(String.valueOf(macongviec))
+        CongViec congViec = congViecResponsitory.findById(macongviec)
                 .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
-
         // Lấy MucTieu từ repository dựa trên mã mục tiêu từ request
         MucTieu mucTieu = mucTieuRepository.findById(request.getMucTieu().getMamuctieu())
                 .orElseThrow(() -> new AppException(ErrorCode.MucTieu_NOT_EXISTED));
+
+//        TrangThaiCongViec trangThaiCongViec = trangThaiCongViecResponsitory.findById(request.getTrangthaicongviec())
+//                .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
 
         // Cập nhật thông tin công việc từ request
         congViec.setTencongviec(request.getTencongviec());
         congViec.setNgaybatdau(request.getNgaybatdau());
         congViec.setNgayketthucdukien(request.getNgayketthucdukien());
-        congViec.setTrangthaicongviec(request.getTrangthaicongviec());
+     //   congViec.setTrangThaiCongViec(trangThaiCongViec);
         congViec.setMacongvieccha(request.getMacongvieccha());
         congViec.setMucTieu(mucTieu);
 
@@ -310,6 +313,10 @@ public class CongViecService {
 
     public List<CongViecResponse> getCongViecByMaNguoiTao (int madonvi,int ma_nguoitao){
         return congViecResponsitory.getCongViecDonViByNguoiTao(madonvi,ma_nguoitao).stream().map(congViecMapper::toCongViecResponse).toList();
+
+    }
+    public List<CongViecResponse> getCongViecBanLanhDaoService (int manhanvien){
+        return congViecResponsitory.getCongViecBanLanhDao(manhanvien).stream().map(congViecMapper::toCongViecResponse).toList();
 
     }
 }

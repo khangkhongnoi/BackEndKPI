@@ -28,6 +28,36 @@ public class NhanVienController {
     HttpServletRequest request;
     AuthenticationService authenticationService;
 
+    @GetMapping("/nhan-vien-theo-chuc-vu")
+    ApiResponse<List<NhanVienResponse>>  getAllNhanVienControllerTheoChucVu(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu){
+        try{
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                if(machucvu == 6){
+                    return ApiResponse.<List<NhanVienResponse>>builder()
+                            .result(nhanVienService.getAllNhanVienService())
+                            .code(HttpStatus.OK.value())
+                            .build();
+                }else {
+                    return ApiResponse.<List<NhanVienResponse>>builder()
+                            .result(nhanVienService.getNhanVienDonVi(madonvi))
+                            .code(HttpStatus.OK.value())
+                            .build();
+                }
+
+            }else
+            {
+                return ApiResponse.<List<NhanVienResponse>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())  // Using HTTP status as the code
+                        .build();
+            }
+        } catch (ParseException | JOSEException e){
+            e.printStackTrace();
+            return ApiResponse.<List<NhanVienResponse>>builder()
+                    .message("Internal Server Error")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
+                    .build();
+        }
+    }
     @GetMapping("/{manhanvien}")
     ApiResponse<NhanVien> getall(@PathVariable int manhanvien){
 
