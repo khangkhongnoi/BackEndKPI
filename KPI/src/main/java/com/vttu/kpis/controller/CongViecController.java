@@ -77,8 +77,44 @@ public class CongViecController {
         }
     }
 
-    @GetMapping("/duocgiao")
+    @GetMapping("/nhanviec/donvi")
     ApiResponse<List<CongViecResponse>> getCongViecDonViDuocGiao(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
+
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+
+                if (machucvu == 3) {
+
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
+                            .code(HttpStatus.OK.value())
+                            .build();
+                }else if(machucvu == 6){
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .result(congViecService.getCongViecBanLanhDaoService(manhanvien))
+                            .code(HttpStatus.OK.value())
+                            .build();
+                }
+                else {
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .code(HttpStatus.UNAUTHORIZED.value())
+                            .build();
+                }
+            } else {
+                return ApiResponse.<List<CongViecResponse>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<List<CongViecResponse>>builder()
+                    .message("Internal Server Error!")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+    @GetMapping("/nhanviec/bophan")
+    ApiResponse<List<CongViecResponse>> getCongViecBoPhanDuocGiao(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
 
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {

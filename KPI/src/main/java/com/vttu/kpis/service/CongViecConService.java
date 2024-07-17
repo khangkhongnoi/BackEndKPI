@@ -254,6 +254,25 @@ public class CongViecConService {
                 // Xử lý phân công lãnh đạo từ request
             }
         }
+        else if(request.getDanhCho().getMadanhcho() == 2){
+
+            Set<PhanCongBoPhan> phanCongBoPhans = congViec.getPhanCongBoPhans();
+            Set<PhanCongBoPhanRequest> congBoPhanRequests = request.getPhanCongBoPhans();
+            Set<Integer> maBPRequest = congBoPhanRequests.stream()
+                    .map(requestid -> requestid.getBoPhan().getMabophan())
+                    .collect(Collectors.toSet());
+            Set<PhanCongBoPhan> nonDuplication = phanCongBoPhans.stream()
+                    .filter(item -> !maBPRequest.contains(item.getBoPhan().getMabophan()))
+                    .collect(Collectors.toSet());
+
+            if(request.getPhanCongBoPhans().isEmpty())
+                throw new AppException(ErrorCode.PhanCongBoPhanIsEmpty);
+
+            for(PhanCongBoPhan i : nonDuplication){
+                int mabophan = i.getBoPhan().getMabophan();
+
+            }
+        }
             return congViecConNhanVienMapper.toCongViecConNhanVienResponse(congViecResponsitory.save(congViec));
 
         }
