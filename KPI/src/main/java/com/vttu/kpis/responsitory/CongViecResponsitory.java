@@ -33,6 +33,15 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
             "where phan_cong_don_vi.ma_donvi =:madonvi and cong_viec.macongvieccha = '0'", nativeQuery = true)
     List<CongViec> getCongViecDonVi(@Param("madonvi") int madonvi);
 
+    @Query(value = "SELECT * FROM  cong_viec CV\n" +
+            "            join phan_cong_bo_phan on phan_cong_bo_phan.ma_congviec = CV.macongviec\n" +
+            "            WHERE phan_cong_bo_phan.ma_bophan = :mabophan", nativeQuery = true)
+    List<CongViec> getCongViecBoPhanNhan(@Param("mabophan") int mabophan);
+
+    @Query(value = "SELECT * FROM  cong_viec CV\n" +
+            "            join phan_cong_nhan_vien on phan_cong_nhan_vien.ma_congviec = CV.macongviec\n" +
+            "            WHERE phan_cong_nhan_vien.ma_nhanvien =:manhanvien", nativeQuery = true)
+    List<CongViec> getCongViecNhanVienNhan(@Param("manhanvien") int manhanvien);
     @Query(value = "SELECT * FROM cong_viec\n" +
             "           join phan_cong_lanh_dao ON phan_cong_lanh_dao.ma_congviec = cong_viec.macongviec\n" +
             "            where phan_cong_lanh_dao.ma_nhanvien = :manhanvein and cong_viec.macongvieccha = '0'\n", nativeQuery = true)

@@ -13,7 +13,6 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ import java.util.List;
 @RequestMapping("/congvieccon")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CongVIecConController {
+public class CongViecConController {
 
 
     CongViecConService congViecConService;
@@ -38,6 +37,30 @@ public class CongVIecConController {
             if(CheckToken.CheckHanToKen(request,authenticationService)){
                 return ApiResponse.<CongViecConNhanVienResponse>builder()
                         .result(congViecConService.createCongViec(congViecConNhanVienRequest))
+                        .code(HttpStatus.OK.value())
+                        .message("Công việc con được tạo thành công.")
+                        .build();
+            }else{
+                return ApiResponse.<CongViecConNhanVienResponse>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        }catch (ParseException | JOSEException e){{
+            e.printStackTrace();
+            return ApiResponse.<CongViecConNhanVienResponse>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }}
+
+
+    }
+    @PostMapping("/bophan/nhanvien")
+    ApiResponse<CongViecConNhanVienResponse> createCongViecConNhanVien (@RequestBody @Valid CongViecConNhanVienRequest congViecConNhanVienRequest){
+
+        try {
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<CongViecConNhanVienResponse>builder()
+                        .result(congViecConService.createCongViecConBoPhanNhan(congViecConNhanVienRequest))
                         .code(HttpStatus.OK.value())
                         .message("Công việc con được tạo thành công.")
                         .build();

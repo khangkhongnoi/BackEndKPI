@@ -128,4 +128,25 @@ public class NhanVienController {
         }
     }
 
+    @GetMapping("/nhan-vien-theo-bo-phan/{mabophan}")
+    ApiResponse<List<NhanVienResponse>> getNhanVienTheoBoPhan (@PathVariable int mabophan){
+        try{
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<List<NhanVienResponse>>builder()
+                        .result(nhanVienService.getNhanVienBoPhanService(mabophan))
+                        .code(HttpStatus.OK.value())
+                        .build();
+            }else {
+                return ApiResponse.<List<NhanVienResponse>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        }catch (ParseException | JOSEException e){
+            e.printStackTrace();
+            return ApiResponse.<List<NhanVienResponse>>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+
 }

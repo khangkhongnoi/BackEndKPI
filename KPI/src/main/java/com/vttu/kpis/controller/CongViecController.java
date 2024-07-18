@@ -10,9 +10,7 @@ import com.vttu.kpis.dto.response.CongViecResponse;
 import com.vttu.kpis.entity.CongViec;
 import com.vttu.kpis.entity.MucTieu;
 import com.vttu.kpis.entity.PhanCongDonVi;
-import com.vttu.kpis.service.AuthenticationService;
-import com.vttu.kpis.service.CongViecService;
-import com.vttu.kpis.service.PhanCongDonViService;
+import com.vttu.kpis.service.*;
 import com.vttu.kpis.utils.CheckToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -38,6 +36,8 @@ public class CongViecController {
     PhanCongDonViService phanCongDonViService;
     HttpServletRequest request;
     AuthenticationService authenticationService;
+    PhanCongBoPhanService phanCongBoPhanService;
+    PhanCongNhanVienService phanCongNhanVienService;
 
     @GetMapping
     ApiResponse<List<CongViecResponse>> getCongViecDonVi(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
@@ -114,15 +114,15 @@ public class CongViecController {
         }
     }
     @GetMapping("/nhanviec/bophan")
-    ApiResponse<List<CongViecResponse>> getCongViecBoPhanDuocGiao(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
+    ApiResponse<List<CongViecResponse>> getCongViecBoPhanDuocGiao(@RequestParam("mabophan") int mabophan, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
 
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
 
-                if (machucvu == 3) {
+                if (machucvu == 2) {
 
                     return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
+                            .result(phanCongBoPhanService.getCongViecBoPhanNhanService(mabophan))
                             .code(HttpStatus.OK.value())
                             .build();
                 }else if(machucvu == 6){
@@ -150,6 +150,30 @@ public class CongViecController {
         }
     }
 
+    @GetMapping("/nhanviec/canhan")
+    ApiResponse<List<CongViecResponse>> getCongViecCaNhanDuocGiao(@RequestParam("manhanvien") int manhanvien) {
+
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .result(phanCongNhanVienService.getCongViecNhanVienNhanService(manhanvien))
+                            .code(HttpStatus.OK.value())
+                            .build();
+
+            } else {
+                return ApiResponse.<List<CongViecResponse>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<List<CongViecResponse>>builder()
+                    .message("Internal Server Error!")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
     @PostMapping
   ApiResponse<CongViecResponse> createCongViec(@RequestBody @Valid CongViecRequest congViecRequest){
 

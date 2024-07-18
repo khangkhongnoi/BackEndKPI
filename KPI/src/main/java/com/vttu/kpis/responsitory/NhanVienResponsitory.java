@@ -1,6 +1,7 @@
 package com.vttu.kpis.responsitory;
 
 import com.vttu.kpis.dto.response.ThongTinLoginResponse;
+import com.vttu.kpis.entity.CongViec;
 import com.vttu.kpis.entity.NhanVien;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,8 +23,12 @@ public interface NhanVienResponsitory extends JpaRepository<NhanVien, Integer> {
     @Query("SELECT nv FROM NhanVien nv where nv.donVi.madonvi =:madonvi")
     List<NhanVien> getNhanVienDonVi(int madonvi);
 
+    @Query("SELECT nv FROM NhanVien nv where nv.boPhan.mabophan =:mabophan")
+    List<NhanVien> getNhanVienBoPhan(int mabophan);
+
     @Query("SELECT NV FROM NhanVien NV LEFT JOIN NV.chuyenTiepCongViecs ct WHERE ct.congViec.macongviec = :macongviec")
         List<NhanVien> getNhanVienDuocNhanChuyenTiepCongViecByMaCongViec (String macongviec);
+
 
 
 }

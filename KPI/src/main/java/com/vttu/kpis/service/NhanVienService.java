@@ -6,6 +6,7 @@ import com.vttu.kpis.entity.NhanVien;
 import com.vttu.kpis.exception.AppException;
 import com.vttu.kpis.exception.ErrorCode;
 import com.vttu.kpis.mapper.NhanVienMapper;
+import com.vttu.kpis.responsitory.BoPhanResponsitory;
 import com.vttu.kpis.responsitory.DonViResponsitory;
 import com.vttu.kpis.responsitory.NhanVienResponsitory;
 import lombok.AccessLevel;
@@ -25,6 +26,7 @@ public class NhanVienService {
     NhanVienResponsitory nhanVienResponsitory;
     NhanVienMapper nhanVienMapper;
     DonViResponsitory donViResponsitory;
+    BoPhanResponsitory boPhanResponsitory;
     public ThongTinLoginResponse luuthongtinnhanvien(int manhanvien, int machucvi){
 
         return nhanVienResponsitory.findByManhanvienAndChucVuss(manhanvien,machucvi);
@@ -45,6 +47,12 @@ public class NhanVienService {
                 .orElseThrow(() -> new AppException(ErrorCode.DonVi_NOT_EXISTED));
 
         return nhanVienResponsitory.getNhanVienDonVi(madonvi).stream().map(nhanVienMapper::toNhanVienResponse).toList();
+    }
+
+    public List<NhanVienResponse> getNhanVienBoPhanService(int mabophan){
+        boPhanResponsitory.findById(mabophan)
+                .orElseThrow(() -> new AppException(ErrorCode.BoPhan_NOT_EXISTED));
+        return nhanVienResponsitory.getNhanVienBoPhan(mabophan).stream().map(nhanVienMapper::toNhanVienResponse).toList();
     }
 
     public List<NhanVienResponse> getAllNhanVienService(){

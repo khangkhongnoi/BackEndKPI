@@ -48,6 +48,10 @@ public class CongViec {
     @JoinColumn(name = "ma_danhcho", nullable = false)
     DanhCho danhCho;
 
+    @ManyToOne
+    @JoinColumn(name = "ma_ketqua", nullable = false)
+    KetQuaCongViec ketQuaCongViec;
+
     @OneToMany(mappedBy = "congViec",cascade = CascadeType.ALL)
     @JsonManagedReference
     Set<PhanCongDonVi> phanCongDonVis;

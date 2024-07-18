@@ -35,6 +35,7 @@ public class CongViecConNhanVienRequest {
     Integer trongso;
     int trangthaicongviec;
     float phantramhoanthanh;
+    String mota;
 
     @NotNull(message = "Công việc cha không được trống")
     String macongvieccha;

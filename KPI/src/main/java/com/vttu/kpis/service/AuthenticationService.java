@@ -73,7 +73,7 @@ public IntrospectResponse introspect(IntrospectRequest request) throws ParseExce
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
 
-        var user = taiKhoanRepository.findByTentaikhoan(request.getUsername())
+        var user = taiKhoanRepository.findByTentaikhoan(request.getUsername().trim())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -106,7 +106,7 @@ public IntrospectResponse introspect(IntrospectRequest request) throws ParseExce
                 .orElseThrow(() -> new AppException(ErrorCode.NhanVien_ChucVu_NOT_FOUND));
 
 
-         var token = generateToken(user,machucvu,nhanVienChucVu.getDonVi().getMadonvi());
+         var token = generateToken(user,machucvu,nhanVienChucVu.getDonVi().getMadonvi(),nhanVienChucVu.getBoPhan().getMabophan());
 
         return AuthenticationResponse.builder()
                  .token(token)
@@ -114,7 +114,7 @@ public IntrospectResponse introspect(IntrospectRequest request) throws ParseExce
                 .build();
     }
 
-    private String  generateToken(TaiKhoan taiKhoan, int machucvu, int madonvi){
+    private String  generateToken(TaiKhoan taiKhoan, int machucvu, int madonvi, int mabophan){
 
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -130,6 +130,7 @@ public IntrospectResponse introspect(IntrospectRequest request) throws ParseExce
                 .claim("manhanvien", taiKhoan.getNhanVien().getManhanvien())
                 .claim("tennhanvien", taiKhoan.getNhanVien().getTennhanvien())
                 .claim("madonvi", madonvi)
+                .claim("mabophan", mabophan)
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header,payload);
