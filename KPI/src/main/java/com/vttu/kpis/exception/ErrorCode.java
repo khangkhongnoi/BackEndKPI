@@ -32,6 +32,7 @@ public enum ErrorCode {
     TrangThai_NOT_EXISTED(1023, "Trạng thái không tồn tại",HttpStatus.BAD_REQUEST),
     PhanCongBoPhanIsEmpty(1024, "Phân công bộ phận không được rỗng", HttpStatus.BAD_REQUEST),
     BoPhan_NOT_EXISTED(1025, "Bộ phận không tồn tại",HttpStatus.BAD_REQUEST),
+    KetQua_NOT_EXISTED(1026, "Cách tính kết quả không tồn tại",HttpStatus.BAD_REQUEST),
     ;
 
 

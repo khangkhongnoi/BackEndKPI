@@ -412,5 +412,58 @@ public class CongViecConService {
         }
 
 
+    @Transactional(rollbackFor = Exception.class)
+    public CongViecConNhanVienResponse createCongViecConNhanVienNhan(CongViecConNhanVienRequest request){
 
+        // kiểm tra sự tồn tại của công việc
+        CongViec cong = congViecResponsitory.findByMacongviec(request.getMacongvieccha())
+                .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+        TrangThaiCongViec trangThaiCongViec = new TrangThaiCongViec();
+        trangThaiCongViec.setMatrangthai(1);
+        KetQuaCongViec ketQuaCongViec = new KetQuaCongViec();
+        ketQuaCongViec.setMaketqua(1);
+        // Tạo đối tượng CongViec từ request
+        CongViec congViec = congViecConNhanVienMapper.toCreateCongViec(request);
+        congViec.setTrangThaiCongViec(trangThaiCongViec);
+        congViec.setPhantramhoanthanh(0);
+
+
+        // kiểm tra ngay bắt đầu và ngày kết thúc công việc con phải nằm trong ngay của công việc cha
+
+        LocalDate ngaybatdaucvcha = cong.getNgaybatdau();
+        LocalDate ngayketthuccvcha = cong.getNgayketthucdukien();
+
+        LocalDate ngaybdcvcon = request.getNgaybatdau();
+        LocalDate ngayktcvcon = request.getNgayketthucdukien();
+
+        if(ngaybdcvcon.isBefore(ngaybatdaucvcha))
+            throw new AppException(ErrorCode.ErrorNgayBDConViecCon,"Ngày bắt đầu: " + DateConverter.converDate(cong.getNgaybatdau()) );
+        if(ngayktcvcon.isAfter(ngayketthuccvcha))
+            throw new AppException(ErrorCode.ErrorNgayKTConViecCon, "Ngày kết thúc: " + DateConverter.converDate(cong.getNgayketthucdukien()));
+
+        if(request.getPhanCongNhanViens().isEmpty())
+            throw  new AppException(ErrorCode.PhanCongNhanVienIsEmpty);
+
+        Set<PhanCongNhanVien> phanCongNhanViens = new HashSet<>();
+        // Xử lý phân công lãnh đạo từ request
+        for (PhanCongNhanVienRequest list : request.getPhanCongNhanViens()) {
+            PhanCongNhanVien phanCongNhanVien = new PhanCongNhanVien();
+            phanCongNhanVien.setCongViec(congViec);
+            phanCongNhanVien.setNhanVien(nhanVienRepository.findById(list.getNhanVien().getManhanvien())
+                    .orElseThrow(() -> new AppException(ErrorCode.NhanVien_NOT_EXISTED)));
+            phanCongNhanVien.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
+                    .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+            phanCongNhanViens.add(phanCongNhanVien);
+        }
+        congViec.setPhanCongNhanViens(phanCongNhanViens);
+
+        Date ngayhientai = new Date();
+        // Gán MucTieu, PhanCongDonVi và PhanCongLanhDao cho CongViec
+        congViec.setThoigiantao(ngayhientai);
+        congViec.setKetQuaCongViec(ketQuaCongViec);
+
+        // Lưu CongViec và trả về CongViecResponse
+        return congViecConNhanVienMapper.toCongViecConNhanVienResponse(congViecResponsitory.save(congViec));
+
+    }
 }

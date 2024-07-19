@@ -36,7 +36,7 @@ public class CongViecConController {
         try {
             if(CheckToken.CheckHanToKen(request,authenticationService)){
                 return ApiResponse.<CongViecConNhanVienResponse>builder()
-                        .result(congViecConService.createCongViec(congViecConNhanVienRequest))
+                        .result(congViecConService.createCongViecConNhanVienNhan(congViecConNhanVienRequest))
                         .code(HttpStatus.OK.value())
                         .message("Công việc con được tạo thành công.")
                         .build();
@@ -142,5 +142,6 @@ public class CongViecConController {
                       .build();
           }
       }
+
 
 }

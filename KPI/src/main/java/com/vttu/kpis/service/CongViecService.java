@@ -35,6 +35,7 @@ public class CongViecService {
     PhanCongLanhDaoRepository phanCongLanhDaoRepository;
     NhomMucTieuResponsitory nhomMucTieuResponsitory;
     TrangThaiCongViecResponsitory trangThaiCongViecResponsitory;
+    KetQuaCongViecResponsitory ketQuaCongViecResponsitory;
     public CongViecResponse createCongViec(CongViecRequest request){
         // Tạo đối tượng CongViec từ request
         CongViec congViec = congViecMapper.toCreateCongViec(request);
@@ -318,5 +319,113 @@ public class CongViecService {
     public List<CongViecResponse> getCongViecBanLanhDaoService (int manhanvien){
         return congViecResponsitory.getCongViecBanLanhDao(manhanvien).stream().map(congViecMapper::toCongViecResponse).toList();
 
+    }
+
+ //   @Transactional(rollbackFor = Exception.class)
+    public float updatetrangthaicongviecService(String macongviec, int matrangthai){
+        CongViec congViecNhanVien = congViecResponsitory.findById(macongviec.trim())
+                .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+         congViecResponsitory.updateCongViecByTrangThaiCongViec(matrangthai,macongviec);
+        float phantramhoanthanh = 0;
+         int ketquacanhan = congViecNhanVien.getKetQuaCongViec().getMaketqua();
+        // Kiểm tra kết quả công việc cá nhân
+
+        if (ketquacanhan == 1 && matrangthai == 3) {
+            phantramhoanthanh = 100;
+        }
+        congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhoanthanh, macongviec);
+  //      float phantramhtcvcha = 0;
+        // từ công việc của nhân viên ta thực hiện tìm các công việc cha và update phần trăm hoàn thành theo kết quả
+//        while (congViecNhanVien != null) {
+//
+//            String macongvieccha = congViecNhanVien.getMacongvieccha();
+//            String macongvieccon = congViecNhanVien.getMacongviec();
+//            String xuat = congViecNhanVien.getMacongvieccha();
+//            if(macongvieccha.equals("0")){
+//                congViecNhanVien = congViecResponsitory.findById(macongvieccon)
+//                        .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+//            }else {
+//                congViecNhanVien = congViecResponsitory.findById(macongvieccha)
+//                        .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+//            }
+//
+//
+//            int ketquacvcha = congViecNhanVien.getKetQuaCongViec().getMaketqua();
+//            float tongphantram = 0;
+//            int soluong = 0;
+//            if(ketquacvcha == 2 ){
+//                    List<CongViec> congviecCha = congViecResponsitory.getCongViecConTheoMaCongViecChaGoc(macongvieccha);
+//                        for (CongViec cv : congviecCha){
+//                            List<CongViec> congviecCon = congViecResponsitory.getCongViecTheoMaCongViecGoc(cv.getMacongviec());
+//                            for (CongViec cvc : congviecCon){
+//                                soluong++;
+//                                tongphantram += cvc.getPhantramhoanthanh();
+//                            }
+//                            if (soluong > 0) {
+//                                phantramhtcvcha = tongphantram / soluong;
+//                                congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhtcvcha, macongvieccha);
+//                            }
+//                        }
+//
+//            }
+//            if (xuat.equals("0")) {
+//                break;
+//            }
+//        }
+        tinhPhanTramHoanThanhNgucLen(macongviec);
+
+        return phantramhoanthanh;
+    }
+
+    public void tinhPhanTramHoanThanhNgucLen(String macongviec) {
+
+        CongViec congViec = congViecResponsitory.findById(macongviec)
+                .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+              float phantramhtcvcha = 0;
+       //  từ công việc của nhân viên ta thực hiện tìm các công việc cha và update phần trăm hoàn thành theo kết quả
+        while (congViec != null) {
+
+            String macongvieccha = congViec.getMacongvieccha();
+            String macongvieccon = congViec.getMacongviec();
+            String xuat = congViec.getMacongvieccha();
+            if(macongvieccha.equals("0")){
+                congViec = congViecResponsitory.findById(macongvieccon)
+                        .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+            }else {
+                congViec = congViecResponsitory.findById(macongvieccha)
+                        .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+            }
+
+
+            int ketquacvcha = congViec.getKetQuaCongViec().getMaketqua();
+            float tongphantram = 0;
+            int soluong = 0;
+            if(ketquacvcha == 2 ){
+                    List<CongViec> congviecCha = congViecResponsitory.getCongViecConTheoMaCongViecChaGoc(macongvieccha);
+                        for (CongViec cv : congviecCha){
+                            List<Map<String,Object>> congviecCon = congViecResponsitory.getCongViecTheoMaCongViecGoc(cv.getMacongviec());
+                    System.err.println(congviecCon);
+                       for (Map<String,Object> cvc : congviecCon){
+                                soluong++;
+                                tongphantram += Float.parseFloat(cvc.get("phantramhoanthanh").toString());
+                            }
+                            if (soluong > 0) {
+                                phantramhtcvcha = tongphantram / soluong;
+                                congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhtcvcha, macongvieccha);
+                            }
+                        }
+
+            }
+            if (xuat.equals("0")) {
+                break;
+            }
+        }
+    }
+
+    public boolean UpdateTinhKetQuaCongViec(String macongviec, int maketqua) {
+           congViecResponsitory.findById(macongviec).orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+            ketQuaCongViecResponsitory.findById(maketqua).orElseThrow(() -> new AppException(ErrorCode.KetQua_NOT_EXISTED));
+            congViecResponsitory.updateTinhKetQuaCongViec(maketqua,macongviec);
+            return true;
     }
 }

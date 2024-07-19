@@ -2,12 +2,16 @@ package com.vttu.kpis.responsitory;
 
 import com.vttu.kpis.entity.CongViec;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
+@Repository
 public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
 
     boolean existsByTencongviec(String tencongviec);
@@ -40,7 +44,7 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
 
     @Query(value = "SELECT * FROM  cong_viec CV\n" +
             "            join phan_cong_nhan_vien on phan_cong_nhan_vien.ma_congviec = CV.macongviec\n" +
-            "            WHERE phan_cong_nhan_vien.ma_nhanvien =:manhanvien", nativeQuery = true)
+            "            WHERE phan_cong_nhan_vien.ma_nhanvien =:manhanvien and cv.ma_nguoitao !=:manhanvien", nativeQuery = true)
     List<CongViec> getCongViecNhanVienNhan(@Param("manhanvien") int manhanvien);
     @Query(value = "SELECT * FROM cong_viec\n" +
             "           join phan_cong_lanh_dao ON phan_cong_lanh_dao.ma_congviec = cong_viec.macongviec\n" +
@@ -65,6 +69,15 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
     @Query("SELECT CV FROM CongViec CV WHERE CV.macongvieccha=:macongvieccha")
         List<CongViec> getCongViecConTheoMaCongViecCha(String macongvieccha);
 
+    @Query(value = "select * from cong_viec where cong_viec.macongvieccha =:macongviec", nativeQuery = true)
+    List<Map<String,Object>> getCongViecTheoMaCongViecGoc(String macongviec);
+
+    @Query(value = "select * from cong_viec" +
+            " where cong_viec.macongviec =:macongvieccha", nativeQuery = true)
+    List<CongViec> getCongViecConTheoMaCongViecChaGoc(String macongvieccha);
+
+    @Query("SELECT CV FROM CongViec CV WHERE CV.macongvieccha=:macongvieccha AND CV.macongviec =:macongviec")
+    CongViec getCongViecConTheoMaCongViecChaVaCon(String macongvieccha,String macongviec);
     @Query(value = "SELECT * FROM  cong_viec CV\n" +
             "join phan_cong_don_vi on phan_cong_don_vi.ma_congviec = CV.macongviec\n" +
             "WHERE phan_cong_don_vi.ma_donvi = :madonvi and CV.macongvieccha = '0'",nativeQuery = true)
@@ -74,4 +87,19 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
             "join phan_cong_don_vi on phan_cong_don_vi.ma_congviec = CV.macongviec\n" +
             "WHERE phan_cong_don_vi.ma_donvi = :madonvi ",nativeQuery = true)
     List<CongViec> getCongViecDonViByHieuTruongChucVuTruongDonVi (@Param("madonvi") int madonvi);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE CongViec CV SET CV.trangThaiCongViec.matrangthai =:matrangthai where CV.macongviec =:macongviec")
+    void updateCongViecByTrangThaiCongViec(int matrangthai,String macongviec);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update cong_viec set phantramhoanthanh = :phantramhoanthanh  where cong_viec.macongviec=:macongviec ", nativeQuery = true)
+    void updatePhanTramHoanThanhCongViec(@Param("phantramhoanthanh") float phantramhoanthanh,@Param("macongviec") String macongviec);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update cong_viec set ma_ketqua =:ma_ketqua where cong_viec.macongviec =:macongviec", nativeQuery = true)
+    void updateTinhKetQuaCongViec(@Param("ma_ketqua") int ma_ketqua,@Param("macongviec") String macongviec);
 }

@@ -43,4 +43,5 @@ public class CongViecConNhanVienResponse {
     Set<PhanCongNhanVienRequest> phanCongNhanViens;
     @JsonIgnore
     Set<PhanCongBoPhanRequest> phanCongBoPhans;
+
 }
