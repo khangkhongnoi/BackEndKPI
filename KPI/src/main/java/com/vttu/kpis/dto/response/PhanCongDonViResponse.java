@@ -20,4 +20,5 @@ public class PhanCongDonViResponse {
     CongViecResponse congViec;
     DonViResponse donVi;
     QuyenResponse quyen;
+    boolean thuchienchinh;
 }

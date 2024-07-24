@@ -30,7 +30,7 @@ public class CongViecConController {
     HttpServletRequest request;
     AuthenticationService authenticationService;
 
-    @PostMapping("/nhanvien")
+    @PostMapping("/nhanvien-bophan-donvi")
     ApiResponse<CongViecConNhanVienResponse> createCongViecCon (@RequestBody @Valid CongViecConNhanVienRequest congViecConNhanVienRequest){
 
         try {
@@ -78,6 +78,29 @@ public class CongViecConController {
 
 
     }
+    @PutMapping("/bophan/nhanvien/{macongviec}")
+    ApiResponse<CongViecConNhanVienResponse> updateCongViecConNhanVien (@RequestBody @Valid CongViecConNhanVienRequest congViecConNhanVienRequest, @PathVariable String macongviec){
+
+        try {
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<CongViecConNhanVienResponse>builder()
+                        .result(congViecConService.updateCongViecConBoPhanNhan(macongviec,congViecConNhanVienRequest))
+                        .code(HttpStatus.OK.value())
+                        .message("Công việc con cập nhật thành công.")
+                        .build();
+            }else{
+                return ApiResponse.<CongViecConNhanVienResponse>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        }catch (ParseException | JOSEException e){{
+            e.printStackTrace();
+            return ApiResponse.<CongViecConNhanVienResponse>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }}
+
+    }
     @PutMapping("/nhanvien/{macongviec}")
     ApiResponse<CongViecConNhanVienResponse> updateCongViecCon (@RequestBody @Valid CongViecConNhanVienRequest congViecConNhanVienRequest, @PathVariable String macongviec){
 
@@ -85,6 +108,30 @@ public class CongViecConController {
             if(CheckToken.CheckHanToKen(request,authenticationService)){
                 return ApiResponse.<CongViecConNhanVienResponse>builder()
                         .result(congViecConService.updateCongViecCon(macongviec,congViecConNhanVienRequest))
+                        .code(HttpStatus.OK.value())
+                        .message("Cập nhật công việc con thành công.")
+                        .build();
+            }else{
+                return ApiResponse.<CongViecConNhanVienResponse>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        }catch (ParseException | JOSEException e){{
+            e.printStackTrace();
+            return ApiResponse.<CongViecConNhanVienResponse>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }}
+
+
+    }
+    @PutMapping("/nhanviec/canhan/{macongviec}")
+    ApiResponse<CongViecConNhanVienResponse> updateCongViecConnhanvieccanhan (@RequestBody @Valid CongViecConNhanVienRequest congViecConNhanVienRequest, @PathVariable String macongviec){
+
+        try {
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<CongViecConNhanVienResponse>builder()
+                        .result(congViecConService.updateCongViecConNhanVienNhan(macongviec,congViecConNhanVienRequest))
                         .code(HttpStatus.OK.value())
                         .message("Cập nhật công việc con thành công.")
                         .build();

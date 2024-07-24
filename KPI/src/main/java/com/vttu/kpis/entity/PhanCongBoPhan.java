@@ -34,5 +34,5 @@ public class PhanCongBoPhan {
     @JoinColumn(name = "ma_quyen", nullable = false)
     @NotNull(message = "Quyền không được phép trống")
     Quyen quyen;
-
+    boolean thuchienchinh;
 }

@@ -33,6 +33,10 @@ public enum ErrorCode {
     PhanCongBoPhanIsEmpty(1024, "Phân công bộ phận không được rỗng", HttpStatus.BAD_REQUEST),
     BoPhan_NOT_EXISTED(1025, "Bộ phận không tồn tại",HttpStatus.BAD_REQUEST),
     KetQua_NOT_EXISTED(1026, "Cách tính kết quả không tồn tại",HttpStatus.BAD_REQUEST),
+    CongViec_Nhan_DaXacNhan(1027, "Công việc được nhận đã xác nhận không thể chỉnh sửa",HttpStatus.BAD_REQUEST),
+    CongViec_Dang_ThucHien_ERROR(1028, "Công việc đang tiến hành không thể xóa",HttpStatus.BAD_REQUEST),
+    CongViec_Da_ThucHien_ERROR(1028, "Công việc đã hoàn thành không thể xóa",HttpStatus.BAD_REQUEST),
+    TenDonVi_EXISTED(1029, "Tên đơn vị trùng lặp",HttpStatus.BAD_REQUEST),
     ;
 
 

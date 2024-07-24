@@ -11,6 +11,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface CongViecChuyenTiepMapper {
-    CongViec toCreateCongViecChuyenTiep(CongViecChuyenTiepResquest request);
-    ChuyenTiepCongViecResponse toCongViecConNhanVienResponse(CongViec congViec);
+   // CongViec toCreateCongViecChuyenTiep(CongViecChuyenTiepResquest request);
+  //  ChuyenTiepCongViecResponse toCongViecConNhanVienResponse(CongViec congViec);
 }

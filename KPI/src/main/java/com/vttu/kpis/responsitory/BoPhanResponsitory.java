@@ -11,6 +11,6 @@ public interface BoPhanResponsitory extends JpaRepository<BoPhan, Integer> {
     @Query("SELECT BP FROM BoPhan BP WHERE BP.donVi.madonvi =:madonvi ")
     List<BoPhan> findBoPhanByMadonvi (int madonvi);
 
-
+    boolean existsByTenbophan(String tenbophan);
 
 }

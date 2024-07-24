@@ -102,4 +102,15 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
     @Transactional
     @Query(value = "update cong_viec set ma_ketqua =:ma_ketqua where cong_viec.macongviec =:macongviec", nativeQuery = true)
     void updateTinhKetQuaCongViec(@Param("ma_ketqua") int ma_ketqua,@Param("macongviec") String macongviec);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update cong_viec set phantramhoanthanh =:phantramhoanthanh where cong_viec.macongviec =:macongviec", nativeQuery = true)
+    void updatePhanTramKetQuaCongViec(@Param("phantramhoanthanh") float phantramhoanthanh,@Param("macongviec") String macongviec);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from cong_viec where cong_viec.macongviec =:macongviec", nativeQuery = true)
+    void deleteCongViec(@Param("macongviec") String macongviec);
+
 }

@@ -1,8 +1,7 @@
 package com.vttu.kpis.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vttu.kpis.dto.request.PhanCongBoPhanRequest;
-import com.vttu.kpis.dto.request.PhanCongNhanVienRequest;
+import com.vttu.kpis.dto.request.*;
 import com.vttu.kpis.entity.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +29,8 @@ public class CongViecResponse {
     int ma_nguoitao;
     String ten_nguoitao;
     String mota;
+    boolean xacnhan;
+    boolean yeucauxacnhan;
     DanhCho danhCho;
     MucTieu mucTieu;
     NhomMucTieu nhomMucTieu;

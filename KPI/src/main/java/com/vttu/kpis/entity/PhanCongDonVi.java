@@ -42,5 +42,6 @@ public class PhanCongDonVi {
     @NotNull(message = "Quyền không được phép trống")
     Quyen quyen;
 
-    LocalDateTime thoigian;
+    boolean thuchienchinh;
+
 }

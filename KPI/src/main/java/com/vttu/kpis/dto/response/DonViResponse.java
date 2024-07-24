@@ -17,7 +17,7 @@ import java.util.Set;
 public class DonViResponse {
     int madonvi;
     String tendonvi;
-
+    String mota;
     @JsonIgnore
     Set<BoPhan> boPhans;
     @JsonIgnore

@@ -21,4 +21,5 @@ public class PhanCongDonViRequest {
     DonVi donVi;
     @NotBlank(message = "Quyền không được phép trống")
     Quyen quyen;
+    boolean thuchienchinh;
 }

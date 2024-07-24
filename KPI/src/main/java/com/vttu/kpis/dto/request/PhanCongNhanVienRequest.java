@@ -17,4 +17,5 @@ public class PhanCongNhanVienRequest {
     CongViec congViec;
     NhanVien nhanVien;
     Quyen quyen;
+    boolean thuchienchinh;
 }

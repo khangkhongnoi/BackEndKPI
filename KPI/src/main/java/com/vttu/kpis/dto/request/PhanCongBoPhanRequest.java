@@ -30,4 +30,5 @@ public class PhanCongBoPhanRequest {
 
     @NotNull(message = "Quyền không được phép trống")
     Quyen quyen;
+    boolean thuchienchinh;
 }

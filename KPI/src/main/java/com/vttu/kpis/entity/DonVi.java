@@ -35,5 +35,5 @@ public class DonVi {
     @OneToMany(mappedBy = "donVi")
     @JsonIgnore
     Set<NhanVien_ChucVu> nhanVienChucVus;
-
+    String mota;
 }

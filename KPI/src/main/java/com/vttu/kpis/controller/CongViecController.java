@@ -7,6 +7,7 @@ import com.vttu.kpis.dto.request.CongViecRequest;
 import com.vttu.kpis.dto.request.PhanCongDonViRequest;
 import com.vttu.kpis.dto.response.ApiResponse;
 import com.vttu.kpis.dto.response.CongViecResponse;
+import com.vttu.kpis.entity.BoPhan;
 import com.vttu.kpis.entity.CongViec;
 import com.vttu.kpis.entity.MucTieu;
 import com.vttu.kpis.entity.PhanCongDonVi;
@@ -91,13 +92,12 @@ public class CongViecController {
                             .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
                             .code(HttpStatus.OK.value())
                             .build();
-                }else if(machucvu == 6){
+                } else if (machucvu == 6) {
                     return ApiResponse.<List<CongViecResponse>>builder()
                             .result(congViecService.getCongViecBanLanhDaoService(manhanvien))
                             .code(HttpStatus.OK.value())
                             .build();
-                }
-                else {
+                } else {
                     return ApiResponse.<List<CongViecResponse>>builder()
                             .code(HttpStatus.UNAUTHORIZED.value())
                             .build();
@@ -115,6 +115,7 @@ public class CongViecController {
                     .build();
         }
     }
+
     @GetMapping("/nhanviec/bophan")
     ApiResponse<List<CongViecResponse>> getCongViecBoPhanDuocGiao(@RequestParam("mabophan") int mabophan, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
 
@@ -127,13 +128,12 @@ public class CongViecController {
                             .result(phanCongBoPhanService.getCongViecBoPhanNhanService(mabophan))
                             .code(HttpStatus.OK.value())
                             .build();
-                }else if(machucvu == 6){
+                } else if (machucvu == 6) {
                     return ApiResponse.<List<CongViecResponse>>builder()
                             .result(congViecService.getCongViecBanLanhDaoService(manhanvien))
                             .code(HttpStatus.OK.value())
                             .build();
-                }
-                else {
+                } else {
                     return ApiResponse.<List<CongViecResponse>>builder()
                             .code(HttpStatus.UNAUTHORIZED.value())
                             .build();
@@ -158,10 +158,10 @@ public class CongViecController {
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
 
-                    return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(phanCongNhanVienService.getCongViecNhanVienNhanService(manhanvien))
-                            .code(HttpStatus.OK.value())
-                            .build();
+                return ApiResponse.<List<CongViecResponse>>builder()
+                        .result(phanCongNhanVienService.getCongViecNhanVienNhanService(manhanvien))
+                        .code(HttpStatus.OK.value())
+                        .build();
 
             } else {
                 return ApiResponse.<List<CongViecResponse>>builder()
@@ -176,23 +176,23 @@ public class CongViecController {
                     .build();
         }
     }
-    @PostMapping
-  ApiResponse<CongViecResponse> createCongViec(@RequestBody @Valid CongViecRequest congViecRequest){
 
-        try{
-            if(CheckToken.CheckHanToKen(request,authenticationService)){
+    @PostMapping
+    ApiResponse<CongViecResponse> createCongViec(@RequestBody @Valid CongViecRequest congViecRequest) {
+
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<CongViecResponse>builder()
                         .result(congViecService.createCongViec(congViecRequest))
                         .message("Công việc được tạo thành công")
                         .code(HttpStatus.OK.value())
                         .build();
-            }else
-            {
+            } else {
                 return ApiResponse.<CongViecResponse>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())  // Using HTTP status as the code
                         .build();
             }
-        } catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<CongViecResponse>builder()
                     .message("Thêm không thành công.Internal Server Error!")
@@ -200,24 +200,25 @@ public class CongViecController {
                     .build();
         }
     }
+
     @PutMapping("/{macongviec}")
-   ApiResponse<CongViecResponse> updateCongViec(
+    ApiResponse<CongViecResponse> updateCongViec(
             @PathVariable String macongviec,
             @RequestBody @Valid CongViecRequest congViecRequest) {
 
         try {
-            if(CheckToken.CheckHanToKen(request,authenticationService)){
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<CongViecResponse>builder()
                         .result(congViecService.updateCongViec(macongviec, congViecRequest))
                         .message("Công việc được cập nhật thành công")
                         .code(HttpStatus.OK.value())
                         .build();
-            }else {
+            } else {
                 return ApiResponse.<CongViecResponse>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .build();
             }
-        }catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<CongViecResponse>builder()
                     .message("Internal Server Error!")
@@ -228,21 +229,20 @@ public class CongViecController {
     }
 
     @GetMapping("/{macongviec}")
-   ApiResponse<CongViecResponse> getId(@PathVariable("macongviec") String macongviec){
+    ApiResponse<CongViecResponse> getId(@PathVariable("macongviec") String macongviec) {
 
-        try{
-            if (CheckToken.CheckHanToKen(request,authenticationService))
-            {
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<CongViecResponse>builder()
                         .result(congViecService.getCongViecByMaCongViec(macongviec))
                         .code(HttpStatus.OK.value())
                         .build();
-            }else {
+            } else {
                 return ApiResponse.<CongViecResponse>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .build();
             }
-        }catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<CongViecResponse>builder()
                     .message("Internal Server Error!")
@@ -259,21 +259,20 @@ public class CongViecController {
 
 
     @PostMapping("/update-trang-thai-cong-viec/{macongviec}")
-    ApiResponse<Float> updatetrangthaicongviec (@RequestParam("matrangthai") int matrangthai,@PathVariable String macongviec){
-        try{
-            if (CheckToken.CheckHanToKen(request,authenticationService))
-            {
+    ApiResponse<Float> updatetrangthaicongviec(@RequestParam("matrangthai") int matrangthai, @PathVariable String macongviec) {
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<Float>builder()
-                        .result(congViecService.updatetrangthaicongviecService(macongviec,matrangthai))
+                        .result(congViecService.updatetrangthaicongviecService(macongviec, matrangthai))
                         .code(HttpStatus.OK.value())
                         .message("Cập nhật thành công")
                         .build();
-            }else {
+            } else {
                 return ApiResponse.<Float>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .build();
             }
-        }catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<Float>builder()
                     .message("Internal Server Error!")
@@ -283,25 +282,68 @@ public class CongViecController {
     }
 
     @PutMapping("/cap-nhat-cach-tinh-ket-qua-cv/{macongviec}")
-    ApiResponse<Boolean> updateCapNhatCacheTinhKet(@PathVariable String macongviec, @RequestParam("maketqua") int maketqua){
+    ApiResponse<Float> updateCapNhatCacheTinhKet(@PathVariable String macongviec, @RequestParam("maketqua") int maketqua) {
         try {
-            if(CheckToken.CheckHanToKen(request,authenticationService)){
-                return ApiResponse.<Boolean>builder()
-                        .result(congViecService.UpdateTinhKetQuaCongViec(macongviec,maketqua))
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+                return ApiResponse.<Float>builder()
+                        .result(congViecService.UpdateTinhKetQuaCongViec(macongviec, maketqua))
                         .code(HttpStatus.OK.value())
                         .message("Cập nhật cách tính kết quả thành công")
                         .build();
-            }else {
+            } else {
+                return ApiResponse.<Float>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<Float>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+
+    @PutMapping("/cap-nhat-phan-tram-ket-qua-cv/{macongviec}")
+    ApiResponse<Float> updateCapNhatCacheTinhKet(@PathVariable String macongviec, @RequestParam("phantram") float phantram) {
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+                return ApiResponse.<Float>builder()
+                        .result(congViecService.UpdateTuNhapKetQuaCongViec(macongviec, phantram))
+                        .code(HttpStatus.OK.value())
+                        .message("Cập nhật phần trăm kết quả thành công")
+                        .build();
+            } else {
+                return ApiResponse.<Float>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<Float>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+
+    @DeleteMapping("/xoa-cong-viec-con/{macongviec}")
+    ApiResponse<Boolean> xoaCongViecCon(@PathVariable String macongviec) {
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+                return ApiResponse.<Boolean>builder()
+                        .result(congViecService.xoaCongViecConBoPhanNhan(macongviec))
+                        .code(HttpStatus.OK.value())
+                        .message("Xóa công việc thành công")
+                        .build();
+            } else {
                 return ApiResponse.<Boolean>builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .build();
             }
-        }catch (ParseException | JOSEException e){
+        } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<Boolean>builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .build();
         }
     }
-
 }

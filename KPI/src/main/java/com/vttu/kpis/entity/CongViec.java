@@ -31,7 +31,9 @@ public class CongViec {
     int ma_nguoitao;
     String ten_nguoitao;
     String mota;
-    Date thoigiantao;
+    Date thoigiantao = new Date();
+    boolean xacnhan;
+    boolean yeucauxacnhan;
     @ManyToOne
     @JoinColumn(name = "ma_nhom", nullable = false)
     NhomMucTieu nhomMucTieu;
@@ -51,6 +53,10 @@ public class CongViec {
     @ManyToOne
     @JoinColumn(name = "ma_ketqua", nullable = false)
     KetQuaCongViec ketQuaCongViec;
+
+    @OneToMany(mappedBy = "congViec",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    Set<XacNhan> xacNhans;
 
     @OneToMany(mappedBy = "congViec",cascade = CascadeType.ALL)
     @JsonManagedReference

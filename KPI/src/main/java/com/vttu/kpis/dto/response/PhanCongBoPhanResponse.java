@@ -19,4 +19,5 @@ public class PhanCongBoPhanResponse {
     CongViec congViec;
     BoPhan boPhan;
     Quyen quyen;
+    boolean thuchienchinh;
 }

@@ -46,6 +46,7 @@ public class CongViecConNhanVienRequest {
 
     @NotNull(message = "Dành cho không được phép trống")
     DanhChoResquest danhCho;
+
     Set<PhanCongLanhDaoRequest> phanCongLanhDaos;
     Set<PhanCongDonViRequest> phanCongDonVis;
     Set<PhanCongNhanVienRequest> phanCongNhanViens;
