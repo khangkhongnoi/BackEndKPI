@@ -40,7 +40,7 @@ public List<BoPhanResponse> getAllBoPhan(){
     public BoPhanResponse createBoPhan(BoPhanRequest boPhanRequest){
 
         if(boPhanResponsitory.existsByTenbophan(boPhanRequest.getTenbophan()))
-            throw new AppException(ErrorCode.TenDonVi_EXISTED);
+            throw new AppException(ErrorCode.TenBoPhan_EXISTED);
         BoPhan boPhan = new BoPhan();
         boPhan.setTenbophan(boPhanRequest.getTenbophan());
         boPhan.setMota(boPhanRequest.getMota());
@@ -51,4 +51,29 @@ public List<BoPhanResponse> getAllBoPhan(){
 
         return boPhanMapper.toBophanResponse(boPhanResponsitory.save(boPhan));
     }
+
+    public BoPhanResponse getBoPhanById(int id){
+
+       BoPhan boPhan = boPhanResponsitory.findById(id).orElseThrow(() -> new AppException(ErrorCode.BoPhan_NOT_EXISTED));
+    return boPhanMapper.toBophanResponse(boPhan);
+}
+
+    public BoPhanResponse updateBoPhan(BoPhanRequest boPhanRequest){
+
+        BoPhan boPhan = boPhanResponsitory.findById(boPhanRequest.getMabophan())
+                .orElseThrow(() -> new AppException(ErrorCode.BoPhan_NOT_EXISTED));
+        if(boPhanResponsitory.existsByTenbophanAndMabophanNot(boPhanRequest.getTenbophan(),boPhanRequest.getMabophan()))
+            throw new AppException(ErrorCode.TenBoPhan_EXISTED);
+
+        boPhan.setTenbophan(boPhanRequest.getTenbophan());
+        boPhan.setMota(boPhanRequest.getMota());
+
+        DonVi donVi = new DonVi();
+        donVi.setMadonvi(boPhanRequest.getDonVi().getMadonvi());
+        boPhan.setDonVi(donVi);
+
+        return boPhanMapper.toBophanResponse(boPhanResponsitory.save(boPhan));
+    }
+
+
 }

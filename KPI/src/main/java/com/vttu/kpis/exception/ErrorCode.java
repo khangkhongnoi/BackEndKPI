@@ -37,6 +37,7 @@ public enum ErrorCode {
     CongViec_Dang_ThucHien_ERROR(1028, "Công việc đang tiến hành không thể xóa",HttpStatus.BAD_REQUEST),
     CongViec_Da_ThucHien_ERROR(1028, "Công việc đã hoàn thành không thể xóa",HttpStatus.BAD_REQUEST),
     TenDonVi_EXISTED(1029, "Tên đơn vị trùng lặp",HttpStatus.BAD_REQUEST),
+    TenBoPhan_EXISTED(1030, "Tên bộ phận trùng lặp",HttpStatus.BAD_REQUEST),
     ;
 
 

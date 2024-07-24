@@ -12,5 +12,6 @@ public interface BoPhanResponsitory extends JpaRepository<BoPhan, Integer> {
     List<BoPhan> findBoPhanByMadonvi (int madonvi);
 
     boolean existsByTenbophan(String tenbophan);
+    boolean existsByTenbophanAndMabophanNot(String tenbophan, int mabophan);
 
 }

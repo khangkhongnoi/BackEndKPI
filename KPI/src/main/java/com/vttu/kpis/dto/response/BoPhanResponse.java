@@ -26,4 +26,5 @@ public class BoPhanResponse {
     DonVi donVi;
     @JsonIgnore
     Set<NhanVien> nhanViens;
+    String mota;
 }

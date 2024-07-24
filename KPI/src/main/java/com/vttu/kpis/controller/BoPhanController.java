@@ -103,4 +103,52 @@ public class BoPhanController {
         }
 
     }
+    @GetMapping("/{mabophan}")
+    ApiResponse<BoPhanResponse> getBoPhanAll(@PathVariable int mabophan){
+
+        try{
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<BoPhanResponse>builder()
+                        .result(boPhanService.getBoPhanById(mabophan))
+                        .code(HttpStatus.OK.value())
+                        .build();
+            }else {
+                return ApiResponse.<BoPhanResponse>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        }catch (ParseException | JOSEException e){
+            e.printStackTrace();
+            return ApiResponse.<BoPhanResponse>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+
+    }
+    @PutMapping
+    ApiResponse<BoPhanResponse> updateBoPhan(@RequestBody @Valid BoPhanRequest boPhanRequest) {
+
+        try{
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<BoPhanResponse>builder()
+                        .result(boPhanService.updateBoPhan(boPhanRequest))
+                        .code(HttpStatus.OK.value())
+                        .message("Cập nhật bộ phận thành công")
+                        .build();
+            }else
+            {
+                return ApiResponse.<BoPhanResponse>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())  // Using HTTP status as the code
+                        .build();
+            }
+
+        } catch (ParseException | JOSEException e){
+            e.printStackTrace();
+            return ApiResponse.<BoPhanResponse>builder()
+                    .message("Internal Server Error")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
+                    .build();
+        }
+
+    }
 }
