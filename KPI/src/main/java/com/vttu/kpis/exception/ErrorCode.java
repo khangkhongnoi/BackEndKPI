@@ -38,6 +38,8 @@ public enum ErrorCode {
     CongViec_Da_ThucHien_ERROR(1028, "Công việc đã hoàn thành không thể xóa",HttpStatus.BAD_REQUEST),
     TenDonVi_EXISTED(1029, "Tên đơn vị trùng lặp",HttpStatus.BAD_REQUEST),
     TenBoPhan_EXISTED(1030, "Tên bộ phận trùng lặp",HttpStatus.BAD_REQUEST),
+    ThoiGian_Is_Empty(1031, "Thời gian không được rỗng",HttpStatus.BAD_REQUEST),
+   LyDo_Is_Empty(1032, "Lý do không được rỗng",HttpStatus.BAD_REQUEST),
     ;
 
 

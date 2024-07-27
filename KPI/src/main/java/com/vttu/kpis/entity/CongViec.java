@@ -32,8 +32,10 @@ public class CongViec {
     String ten_nguoitao;
     String mota;
     Date thoigiantao = new Date();
-    boolean xacnhan;
-    boolean yeucauxacnhan;
+    boolean xacnhan = false;
+    boolean yeucauxacnhan = false;
+    boolean yeucaugiahan = false;
+    boolean xacnhangiahan = false;
     @ManyToOne
     @JoinColumn(name = "ma_nhom", nullable = false)
     NhomMucTieu nhomMucTieu;
@@ -77,4 +79,8 @@ public class CongViec {
     @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<ChuyenTiepCongViec> chuyenTiepCongViecs;
+
+    @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
+    @JsonIgnore
+    Set<GiaHan> giaHans;
 }

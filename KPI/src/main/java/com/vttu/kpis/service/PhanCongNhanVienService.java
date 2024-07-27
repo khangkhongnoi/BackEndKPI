@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,7 +23,12 @@ public class PhanCongNhanVienService {
     CongViecMapper congViecMapper;
     public List<CongViecResponse> getCongViecNhanVienNhanService(int manhanvien){
 
-        return congViecResponsitory.getCongViecNhanVienNhan(manhanvien).stream().map(congViecMapper::toCongViecResponse).toList();
+        return congViecResponsitory.getCongViecNhanVienNhan(manhanvien).stream()
+                .map(congViec -> {
+            CongViecResponse response = congViecMapper.toCongViecResponse(congViec);
+            response.setNgayhientai(LocalDate.now());
+            return response;
+        }).toList();
     }
 
 }

@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -113,4 +115,18 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
     @Query(value = "delete from cong_viec where cong_viec.macongviec =:macongviec", nativeQuery = true)
     void deleteCongViec(@Param("macongviec") String macongviec);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update cong_viec set yeucaugiahan = :yeucaugiahan where cong_viec.macongviec =:macongviec", nativeQuery = true)
+    void yeucaugiahancongviec(@Param("yeucaugiahan") boolean yeucaugiahan,@Param("macongviec") String macongviec);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update cong_viec set xacnhangiahan =:xacnhan where cong_viec.macongviec =:macongviec", nativeQuery = true)
+    void xacnhanyeucaugiahancongviec(@Param("xacnhan") boolean xacnhan,@Param("macongviec") String macongviec);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update cong_viec set xacnhangiahan =:xacnhan,ngayketthucdukien =:ngayketthucdukien, yeucaugiahan = false  where cong_viec.macongviec =:macongviec", nativeQuery = true)
+    void updatecongvieckhixacnhangiahan(@Param("xacnhan") boolean xacnhan, @Param("ngayketthucdukien") LocalDate ngayketthucdukien, @Param("macongviec") String macongviec);
 }

@@ -267,7 +267,6 @@ public class CongViecConService {
 
         for(PhanCongNhanVien i : noDuplicationPhanCongNhanVien){
             int manhanvien = i.getNhanVien().getManhanvien();
-
             Map<String,Object> trangthai = phanCongNhanVienResponsitory.findByTrangThaiCongViec(macongvieccon,manhanvien);
 
             Object maTrangThaiObj = trangthai.get("ma_trangthai");

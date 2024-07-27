@@ -22,7 +22,7 @@ public class CongViecResponse {
     String tencongviec;
     LocalDate ngaybatdau;
     LocalDate ngayketthucdukien;
-
+    LocalDate ngayhientai;
     String macongvieccha;
     int trongso;
     float phantramhoanthanh;
@@ -31,6 +31,8 @@ public class CongViecResponse {
     String mota;
     boolean xacnhan;
     boolean yeucauxacnhan;
+    boolean yeucaugiahan = false;
+    boolean xacnhangiahan = false;
     DanhCho danhCho;
     MucTieu mucTieu;
     NhomMucTieu nhomMucTieu;
@@ -41,4 +43,6 @@ public class CongViecResponse {
     Set<PhanCongNhanVien> phanCongNhanViens;
     Set<PhanCongBoPhan> phanCongBoPhans;
     KetQuaCongViec ketQuaCongViec;
+   // Set<GiaHan> giaHans;
+
 }

@@ -18,6 +18,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,13 @@ public class PhanCongDonViService {
 
     public List<CongViecResponse> getCongViecByMaNguoiTao (int ma_nguoitao){
 
-        return congViecResponsitory.findByMa_nguoitao(ma_nguoitao).stream().map(congViecMapper::toCongViecResponse).toList();
+        return congViecResponsitory.findByMa_nguoitao(ma_nguoitao)
+                .stream()
+                .map(congViec -> {
+                    CongViecResponse response = congViecMapper.toCongViecResponse(congViec);
+                    response.setNgayhientai(LocalDate.now());
+                    return response;
+                }).toList();
 
     }
     public List<CongViecResponse> getCongViecBymadonvi (int madonvi){
