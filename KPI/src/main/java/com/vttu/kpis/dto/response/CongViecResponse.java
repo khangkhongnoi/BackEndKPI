@@ -43,6 +43,7 @@ public class CongViecResponse {
     Set<PhanCongNhanVien> phanCongNhanViens;
     Set<PhanCongBoPhan> phanCongBoPhans;
     KetQuaCongViec ketQuaCongViec;
+    Set<XacNhan> xacNhans;
    // Set<GiaHan> giaHans;
 
 }

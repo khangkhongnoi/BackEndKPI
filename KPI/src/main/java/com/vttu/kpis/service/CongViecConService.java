@@ -323,8 +323,15 @@ public class CongViecConService {
 
     }
 
-    public List<CongViecResponse> getCongViecConTheoMaCongViecChaService(String macongvieccha){
-        return congViecResponsitory.getCongViecConTheoMaCongViecCha(macongvieccha).stream().map(congViecMapper::toCongViecResponse).toList();
+    public List<CongViecResponse> getCongViecConTheoMaCongViecChaService(String macongvieccha) {
+        return congViecResponsitory.getCongViecConTheoMaCongViecCha(macongvieccha)
+                .stream()
+                .map(congViec -> {
+                    CongViecResponse response = congViecMapper.toCongViecResponse(congViec);
+                    response.setNgayhientai(LocalDate.now());
+                    return response;
+                })
+                .toList();
     }
 
     public CongViecResponse getChiTietCongViecCon(String macongvieccon) {

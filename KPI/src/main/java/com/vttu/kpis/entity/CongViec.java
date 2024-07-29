@@ -36,6 +36,7 @@ public class CongViec {
     boolean yeucauxacnhan = false;
     boolean yeucaugiahan = false;
     boolean xacnhangiahan = false;
+    boolean trehan = false;
     @ManyToOne
     @JoinColumn(name = "ma_nhom", nullable = false)
     NhomMucTieu nhomMucTieu;

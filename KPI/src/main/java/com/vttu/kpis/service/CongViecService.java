@@ -554,6 +554,7 @@ public class CongViecService {
         return  true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public boolean XacNhanYeuCauHoanThanhCongViec(String macongviec, boolean xacnhan, String noidung) {
         CongViec congViec = congViecResponsitory.findById(macongviec)
                 .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
@@ -565,6 +566,14 @@ public class CongViecService {
           xacNhan.setTrangthai(true);
           xacNhan.setCongViec(congViec);
           xacNhanRespository.save(xacNhan);
+          LocalDate ngayketthuc = congViec.getNgayketthucdukien();
+          LocalDate ngayhientai = LocalDate.now();
+          boolean trehan = false;
+          if (ngayketthuc.isAfter(ngayhientai)) {
+              System.out.println("Ngày kết thúc sau ngày hiện tại.");
+              trehan = true;
+              congViecResponsitory.updatecongvieckhitrehan(true,macongviec);
+          }
       }else {
           if(noidung == null){
               throw new AppException(ErrorCode.CongViec_NOT_EXISTED);
