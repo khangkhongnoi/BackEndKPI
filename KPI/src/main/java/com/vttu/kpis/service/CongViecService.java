@@ -86,6 +86,12 @@ public class CongViecService {
         congViec.setPhanCongDonVis(phanCongDonVis);
         congViec.setPhanCongLanhDaos(phanCongLanhDaos);
         congViec.setThoigiantao(ngayhientai);
+        TrangThaiCongViec trangThaiCongViec = new TrangThaiCongViec();
+        trangThaiCongViec.setMatrangthai(1);
+        congViec.setTrangThaiCongViec(trangThaiCongViec);
+        KetQuaCongViec ketQuaCongViec = new KetQuaCongViec();
+        ketQuaCongViec.setMaketqua(1);
+        congViec.setKetQuaCongViec(ketQuaCongViec);
         // Lưu CongViec và trả về CongViecResponse
         return congViecMapper.toCongViecResponse(congViecResponsitory.save(congViec));
     }
@@ -588,7 +594,6 @@ public class CongViecService {
         congViecResponsitory.save(congViec);
         return true;
     }
-
 
     public boolean xoaCongViecConBoPhanNhan(String macongviec){
 

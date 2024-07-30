@@ -49,7 +49,7 @@ public class CongViecController {
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
 
-                if (machucvu == 5) {
+                if (machucvu == 5 || machucvu == 6) {
 
                     return ApiResponse.<List<CongViecResponse>>builder()
                             .result(phanCongDonViService.getCongViecByMaNguoiTao(manhanvien))

@@ -31,8 +31,9 @@ public class CongViecResponse {
     String mota;
     boolean xacnhan;
     boolean yeucauxacnhan;
-    boolean yeucaugiahan = false;
-    boolean xacnhangiahan = false;
+    boolean yeucaugiahan ;
+    boolean xacnhangiahan ;
+    boolean trehan;
     DanhCho danhCho;
     MucTieu mucTieu;
     NhomMucTieu nhomMucTieu;
