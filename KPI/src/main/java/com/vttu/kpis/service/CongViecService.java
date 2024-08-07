@@ -438,6 +438,7 @@ public class CongViecService {
             if(macongvieccha.equals("0")){
                 congViec = congViecResponsitory.findById(macongvieccon)
                         .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+                macongvieccha = congViec.getMacongviec();
             }else {
                 congViec = congViecResponsitory.findById(macongvieccha)
                         .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
