@@ -40,6 +40,8 @@ public enum ErrorCode {
     TenBoPhan_EXISTED(1030, "Tên bộ phận trùng lặp",HttpStatus.BAD_REQUEST),
     ThoiGian_Is_Empty(1031, "Thời gian không được rỗng",HttpStatus.BAD_REQUEST),
    LyDo_Is_Empty(1032, "Lý do không được rỗng",HttpStatus.BAD_REQUEST),
+    PhanCongLanhDaoIsEmpty(1033, "Phân công lãnh đạo không được rỗng", HttpStatus.BAD_REQUEST),
+
     ;
 
 

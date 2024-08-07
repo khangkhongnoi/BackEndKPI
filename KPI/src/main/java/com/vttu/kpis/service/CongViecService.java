@@ -59,6 +59,10 @@ public class CongViecService {
         Set<PhanCongDonVi> phanCongDonVis = new HashSet<>();
         Set<PhanCongLanhDao> phanCongLanhDaos = new HashSet<>();
 
+        if(request.getPhanCongLanhDaos().isEmpty())
+            throw new AppException(ErrorCode.PhanCongLanhDaoIsEmpty);
+        if(request.getPhanCongDonVis().isEmpty())
+            throw new AppException(ErrorCode.PhanCongDonViIsEmpty);
         // Xử lý phân công đơn vị từ request
         for (PhanCongDonViRequest list : request.getPhanCongDonVis()) {
             PhanCongDonVi phanCongDonVi = new PhanCongDonVi();

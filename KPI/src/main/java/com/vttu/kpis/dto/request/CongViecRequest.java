@@ -53,6 +53,6 @@ public class CongViecRequest {
     DanhChoResquest danhCho;
     Set<PhanCongDonViRequest> phanCongDonVis;
     Set<PhanCongLanhDaoRequest> phanCongLanhDaos;
-    Set<PhanCongBoPhan> phanCongBoPhans;
+    Set<PhanCongBoPhanRequest> phanCongBoPhans;
     Set<PhanCongNhanVienRequest> phanCongNhanViens;
  }
