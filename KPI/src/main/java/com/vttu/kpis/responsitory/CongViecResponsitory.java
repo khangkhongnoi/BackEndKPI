@@ -53,8 +53,15 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
             "            where phan_cong_lanh_dao.ma_nhanvien = :manhanvein and cong_viec.macongvieccha = '0'\n", nativeQuery = true)
     List<CongViec> getCongViecBanLanhDao(@Param("manhanvein") int manhanvein);
 
- @Query("SELECT CV FROM  CongViec CV WHERE CV.ma_nguoitao =:ma_nguoitao AND CV.macongvieccha = '0'")
+ @Query(value = "SELECT * FROM\n" +
+         "    cong_viec CV\n" +
+         "    WHERE CV.ma_nguoitao = :ma_nguoitao AND CV.macongvieccha = '0' AND CV.ma_danhcho = 2", nativeQuery = true)
     List<CongViec> findByMa_nguoitao(int ma_nguoitao);
+
+ @Query(value = "SELECT * FROM\n" +
+         " cong_viec CV\n" +
+         "WHERE CV.ma_nguoitao = :ma_nguoitao AND CV.macongvieccha = '0' AND CV.ma_danhcho = 3", nativeQuery = true)
+ List<CongViec> findByCV_Giao_BoPhan(int ma_nguoitao);
 
    Optional<CongViec> findByMacongviec(String macongviec);
 

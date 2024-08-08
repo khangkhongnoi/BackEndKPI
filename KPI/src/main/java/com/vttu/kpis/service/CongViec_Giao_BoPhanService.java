@@ -17,8 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -98,5 +100,17 @@ public class CongViec_Giao_BoPhanService {
         congViec.setKetQuaCongViec(ketQuaCongViec);
         // Lưu CongViec và trả về CongViecResponse
         return congViecMapper.toCongViecResponse(congViecResponsitory.save(congViec));
+    }
+
+    public List<CongViecResponse> getCongViecGiaoBoPhanByMaNguoiTao (int ma_nguoitao){
+
+        return congViecResponsitory.findByCV_Giao_BoPhan(ma_nguoitao)
+                .stream()
+                .map(congViec -> {
+                    CongViecResponse response = congViecMapper.toCongViecResponse(congViec);
+                    response.setNgayhientai(LocalDate.now());
+                    return response;
+                }).toList();
+
     }
 }

@@ -12,12 +12,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/congviec_giao_bophan")
@@ -51,6 +49,44 @@ public class CongViecGiaoBoPhanController {
             return ApiResponse.<CongViecResponse>builder()
                     .message("Thêm không thành công.Internal Server Error!")
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
+                    .build();
+        }
+    }
+
+    @GetMapping
+    ApiResponse<List<CongViecResponse>> getCongViecDonVi(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
+
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+
+                if (machucvu == 5 || machucvu == 6) {
+
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .result(congViec_Giao_BoPhanService.getCongViecGiaoBoPhanByMaNguoiTao(manhanvien))
+                            .code(HttpStatus.OK.value())
+                            .build();
+                } else if (machucvu == 1) {
+
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .message("Bạn không có quyền truy cập")
+                            .code(HttpStatus.FORBIDDEN.value())
+                            .build();
+                } else {
+                    return ApiResponse.<List<CongViecResponse>>builder()
+                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
+                            .code(HttpStatus.OK.value())
+                            .build();
+                }
+            } else {
+                return ApiResponse.<List<CongViecResponse>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<List<CongViecResponse>>builder()
+                    .message("Internal Server Error!")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .build();
         }
     }
