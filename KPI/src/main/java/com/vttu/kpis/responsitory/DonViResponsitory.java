@@ -3,10 +3,12 @@ package com.vttu.kpis.responsitory;
 import com.vttu.kpis.dto.DonViDTO;
 import com.vttu.kpis.dto.response.DonViResponse;
 import com.vttu.kpis.entity.DonVi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DonViResponsitory extends JpaRepository<DonVi, Integer> {
 
@@ -26,4 +28,7 @@ public interface DonViResponsitory extends JpaRepository<DonVi, Integer> {
     DonViDTO findDonViDTOId(int madovi);
 
     boolean existsByTendonviAndMadonviNot(String tendonvi, int madonvi);
+
+    @Query(value = "select * from don_vi where don_vi.madonvi =:madonvi ", nativeQuery = true)
+    Map<String,Object> findDonViByMaDonVi(int madonvi);
 }

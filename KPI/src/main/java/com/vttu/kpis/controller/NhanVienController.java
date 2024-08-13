@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/nhanvien")
@@ -149,4 +150,29 @@ public class NhanVienController {
         }
     }
 
+    @GetMapping("/nhanvien_by_id/{id}")
+    ApiResponse<Map<String,Object>> nhanvien_by_id(@PathVariable int id) {
+
+        try{
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<Map<String,Object>>builder()
+                        .result(nhanVienService.findNhanVienByMaNhanVienServer(id))
+                        .code(HttpStatus.OK.value())
+                        .build();
+            }else
+            {
+                return ApiResponse.<Map<String,Object>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())  // Using HTTP status as the code
+                        .build();
+            }
+
+        } catch (ParseException | JOSEException e){
+            e.printStackTrace();
+            return ApiResponse.<Map<String,Object>>builder()
+                    .message("Internal Server Error")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
+                    .build();
+        }
+
+    }
 }

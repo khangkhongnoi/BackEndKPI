@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +58,9 @@ public class DonViService {
         donVi.setMota(donViRequest.getMota());
 
         return donViMapper.toDonViResponse(donViResponsitory.save(donVi));
+    }
+
+    public Map<String,Object> findDonViByMaDonViServer(int madonvi){
+        return donViResponsitory.findDonViByMaDonVi(madonvi);
     }
 }

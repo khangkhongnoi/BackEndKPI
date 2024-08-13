@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bophan")
@@ -145,6 +146,32 @@ public class BoPhanController {
         } catch (ParseException | JOSEException e){
             e.printStackTrace();
             return ApiResponse.<BoPhanResponse>builder()
+                    .message("Internal Server Error")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
+                    .build();
+        }
+
+    }
+
+    @GetMapping("/bophan_by_id/{id}")
+    ApiResponse<Map<String,Object>> bophan_by_id(@PathVariable int id) {
+
+        try{
+            if(CheckToken.CheckHanToKen(request,authenticationService)){
+                return ApiResponse.<Map<String,Object>>builder()
+                        .result(boPhanService.findBoPhanByMabophanServer(id))
+                        .code(HttpStatus.OK.value())
+                        .build();
+            }else
+            {
+                return ApiResponse.<Map<String,Object>>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())  // Using HTTP status as the code
+                        .build();
+            }
+
+        } catch (ParseException | JOSEException e){
+            e.printStackTrace();
+            return ApiResponse.<Map<String,Object>>builder()
                     .message("Internal Server Error")
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())  // Using HTTP status as the code
                     .build();

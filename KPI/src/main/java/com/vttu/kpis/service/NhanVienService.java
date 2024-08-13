@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +58,9 @@ public class NhanVienService {
 
     public List<NhanVienResponse> getAllNhanVienService(){
         return nhanVienResponsitory.findAll().stream().map(nhanVienMapper::toNhanVienResponse).toList();
+    }
+
+    public Map<String,Object> findNhanVienByMaNhanVienServer(int manhanvien){
+        return nhanVienResponsitory.findNhanVienByMaNhanVien(manhanvien);
     }
 }

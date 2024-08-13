@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NhanVienResponsitory extends JpaRepository<NhanVien, Integer> {
 
@@ -29,6 +30,7 @@ public interface NhanVienResponsitory extends JpaRepository<NhanVien, Integer> {
     @Query("SELECT NV FROM NhanVien NV LEFT JOIN NV.chuyenTiepCongViecs ct WHERE ct.congViec.macongviec = :macongviec")
         List<NhanVien> getNhanVienDuocNhanChuyenTiepCongViecByMaCongViec (String macongviec);
 
-
+    @Query(value = "select * from nhan_vien where nhan_vien.manhanvien = :manhanvien", nativeQuery = true)
+    Map<String,Object> findNhanVienByMaNhanVien(int manhanvien);
 
 }

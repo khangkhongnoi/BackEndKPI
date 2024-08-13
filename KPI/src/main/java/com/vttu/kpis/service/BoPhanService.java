@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +76,8 @@ public List<BoPhanResponse> getAllBoPhan(){
         return boPhanMapper.toBophanResponse(boPhanResponsitory.save(boPhan));
     }
 
+    public Map<String,Object> findBoPhanByMabophanServer(int mabophan){
+            return boPhanResponsitory.findBoPhanByMabophan(mabophan);
+    }
 
 }
