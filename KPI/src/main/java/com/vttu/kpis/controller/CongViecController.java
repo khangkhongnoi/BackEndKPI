@@ -326,6 +326,28 @@ public class CongViecController {
         }
     }
 
+    @DeleteMapping("/xoa-cong-viec-giao-don-vi/{macongviec}")
+    ApiResponse<Boolean> xoaCongViecGiaoDonVi(@PathVariable String macongviec) {
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+                return ApiResponse.<Boolean>builder()
+                        .result(congViecService.xoaCongViecGiaoDonVi(macongviec))
+                        .code(HttpStatus.OK.value())
+                        .message("Xóa công việc thành công")
+                        .build();
+            } else {
+                return ApiResponse.<Boolean>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<Boolean>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+
     @DeleteMapping("/xoa-cong-viec-con/{macongviec}")
     ApiResponse<Boolean> xoaCongViecCon(@PathVariable String macongviec) {
         try {

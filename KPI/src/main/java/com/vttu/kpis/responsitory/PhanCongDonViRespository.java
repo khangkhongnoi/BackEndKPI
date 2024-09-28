@@ -35,4 +35,14 @@ public interface PhanCongDonViRespository extends JpaRepository<PhanCongDonVi, L
             "where cong_viec.macongviec = :macongviec \n" +
             "and phan_cong_don_vi.ma_donvi = :madonvi and phan_cong_don_vi.thuchienchinh = true", nativeQuery = true)
     Map<String, Object> findByTrangThaiCongViec(String macongviec, int madonvi);
+
+    @Query(value = "select cong_viec.ma_trangthai from cong_viec\n" +
+            "join phan_cong_don_vi on phan_cong_don_vi.ma_congviec = cong_viec.macongviec\n" +
+            "where cong_viec.macongviec = :macongviec \n", nativeQuery = true)
+    Map<String, Object> findByTrangThaiCongViecXoa(String macongviec);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from phan_cong_lanh_dao where phan_cong_lanh_dao.ma_congviec =:macongviec",nativeQuery = true)
+    void deleteByMaCongViec(String macongviec);
 }

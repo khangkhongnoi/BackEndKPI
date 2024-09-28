@@ -19,4 +19,9 @@ public interface PhanCongLanhDaoRepository extends JpaRepository<PhanCongLanhDao
 
     @Query("SELECT pcls FROM PhanCongLanhDao pcls WHERE pcls.congViec.macongviec = :macongviec AND pcls.nhanVien.manhanvien = :manhanvien")
     PhanCongLanhDao listPhanCongLanhDaoByMaCongViecAnMaDonVi(String macongviec, int manhanvien);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from phan_cong_don_vi where phan_cong_don_vi.ma_congviec =:macongviec",nativeQuery = true)
+    void deleteByMaCongViec(String macongviec);
 }

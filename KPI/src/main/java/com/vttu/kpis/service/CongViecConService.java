@@ -137,6 +137,7 @@ public class CongViecConService {
                         .orElseThrow(() -> new AppException(ErrorCode.DonVi_NOT_EXISTED)));
                 phanCongDonVi.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
                         .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+                phanCongDonVi.setThuchienchinh(list.isThuchienchinh());
                 phanCongDonVis.add(phanCongDonVi);
             }
             congViec.setPhanCongDonVis(phanCongDonVis);

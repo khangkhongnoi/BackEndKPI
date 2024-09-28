@@ -71,6 +71,7 @@ public class CongViecService {
                     .orElseThrow(() -> new AppException(ErrorCode.DonVi_NOT_EXISTED)));
             phanCongDonVi.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
                     .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+            phanCongDonVi.setThuchienchinh(list.isThuchienchinh());
             phanCongDonVis.add(phanCongDonVi);
         }
 
@@ -179,7 +180,6 @@ public class CongViecService {
     }
 
 
-
     @Transactional(rollbackFor = Exception.class)
     public CongViecResponse updateCongViec(String macongviec, CongViecRequest request) {
         // Lấy đối tượng CongViec từ cơ sở dữ liệu dựa trên mã công việc
@@ -197,6 +197,7 @@ public class CongViecService {
         congViec.setNgayketthucdukien(request.getNgayketthucdukien());
      //   congViec.setTrangThaiCongViec(trangThaiCongViec);
         congViec.setMacongvieccha(request.getMacongvieccha());
+        congViec.setMota(request.getMota());
 
         // Cập nhật tập hợp phân công đơn vị
         Set<PhanCongDonVi> phanCongDonVis = congViec.getPhanCongDonVis();
@@ -264,7 +265,6 @@ public class CongViecService {
                 phanCongLanhDaoRepository.deleteByMaCongViecAndMaNhanVien(macongviec, manhanvien);
 
         }
-
 
         for (PhanCongDonViRequest list : request.getPhanCongDonVis()) {
 
@@ -600,6 +600,38 @@ public class CongViecService {
         return true;
     }
 
+    public boolean xoaCongViecGiaoDonVi(String macongviec) {
+        congViecResponsitory.findById(macongviec)
+                .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+
+        Map<String, Object> trangthai = phanCongDonViRepository.findByTrangThaiCongViecXoa(macongviec);
+
+        Object matrangthaiObj = trangthai.get("ma_trangthai");
+        if (matrangthaiObj != null) {
+            int maTrangThai = Integer.parseInt(matrangthaiObj.toString());
+            if (maTrangThai == 2) {
+                throw new AppException(ErrorCode.CongViec_Dang_ThucHien_ERROR);
+
+            }else if(maTrangThai == 3)
+                throw new AppException(ErrorCode.CongViec_Da_ThucHien_ERROR);
+        } else {
+        throw new AppException(ErrorCode.TrangThai_NOT_EXISTED);
+        }
+
+        long check = congViecResponsitory.countByCheckTruocKhiXoa(macongviec);
+
+        if(check > 0 )
+            throw new AppException(ErrorCode.Error_Delete_CongViec);
+        else{
+            //    phanCongNhanVienResponsitory.deleteByMaCongViecAndMaNhanVien(macongviec,)f
+            phanCongDonViRepository.deleteByMaCongViec(macongviec);
+            phanCongLanhDaoRepository.deleteByMaCongViec(macongviec);
+            congViecResponsitory.deleteCongViec(macongviec);
+        }
+
+        return  true;
+    }
+
     public boolean xoaCongViecConBoPhanNhan(String macongviec){
 
      congViecResponsitory.findById(macongviec)
@@ -615,6 +647,8 @@ public class CongViecService {
 
             }else if(maTrangThai == 3)
                 throw new AppException(ErrorCode.CongViec_Da_ThucHien_ERROR);
+        }else {
+            throw new AppException(ErrorCode.TrangThai_NOT_EXISTED);
         }
         long check = phanCongNhanVienResponsitory.countByTruongBPCheckTruocKhiXoa(macongviec);
 

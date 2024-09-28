@@ -41,7 +41,7 @@ public enum ErrorCode {
     ThoiGian_Is_Empty(1031, "Thời gian không được rỗng",HttpStatus.BAD_REQUEST),
    LyDo_Is_Empty(1032, "Lý do không được rỗng",HttpStatus.BAD_REQUEST),
     PhanCongLanhDaoIsEmpty(1033, "Phân công lãnh đạo không được rỗng", HttpStatus.BAD_REQUEST),
-
+    Error_Delete_CongViec(1034, "Không thể xóa công việc khi công việc con sinh ra", HttpStatus.BAD_REQUEST),
     ;
 
 
