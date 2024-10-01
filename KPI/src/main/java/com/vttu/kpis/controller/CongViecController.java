@@ -81,41 +81,41 @@ public class CongViecController {
         }
     }
 
-    @GetMapping("/nhanviec/donvi")
-    ApiResponse<List<CongViecResponse>> getCongViecDonViDuocGiao(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
-
-        try {
-            if (CheckToken.CheckHanToKen(request, authenticationService)) {
-
-                if (machucvu == 3) {
-
-                    return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
-                            .code(HttpStatus.OK.value())
-                            .build();
-                } else if (machucvu == 6) {
-                    return ApiResponse.<List<CongViecResponse>>builder()
-                            .result(congViecService.getCongViecBanLanhDaoService(manhanvien))
-                            .code(HttpStatus.OK.value())
-                            .build();
-                } else {
-                    return ApiResponse.<List<CongViecResponse>>builder()
-                            .code(HttpStatus.UNAUTHORIZED.value())
-                            .build();
-                }
-            } else {
-                return ApiResponse.<List<CongViecResponse>>builder()
-                        .code(HttpStatus.UNAUTHORIZED.value())
-                        .build();
-            }
-        } catch (ParseException | JOSEException e) {
-            e.printStackTrace();
-            return ApiResponse.<List<CongViecResponse>>builder()
-                    .message("Internal Server Error!")
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .build();
-        }
-    }
+//    @GetMapping("/nhanviec/donvi")
+//    ApiResponse<List<CongViecResponse>> getCongViecDonViDuocGiao(@RequestParam("madonvi") int madonvi, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
+//
+//        try {
+//            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+//
+//                if (machucvu == 3) {
+//
+//                    return ApiResponse.<List<CongViecResponse>>builder()
+//                            .result(phanCongDonViService.getCongViecTheoDonVi(madonvi))
+//                            .code(HttpStatus.OK.value())
+//                            .build();
+//                } else if (machucvu == 6) {
+//                    return ApiResponse.<List<CongViecResponse>>builder()
+//                            .result(congViecService.getCongViecBanLanhDaoService(manhanvien))
+//                            .code(HttpStatus.OK.value())
+//                            .build();
+//                } else {
+//                    return ApiResponse.<List<CongViecResponse>>builder()
+//                            .code(HttpStatus.UNAUTHORIZED.value())
+//                            .build();
+//                }
+//            } else {
+//                return ApiResponse.<List<CongViecResponse>>builder()
+//                        .code(HttpStatus.UNAUTHORIZED.value())
+//                        .build();
+//            }
+//        } catch (ParseException | JOSEException e) {
+//            e.printStackTrace();
+//            return ApiResponse.<List<CongViecResponse>>builder()
+//                    .message("Internal Server Error!")
+//                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                    .build();
+//        }
+//    }
 
     @GetMapping("/nhanviec/bophan")
     ApiResponse<List<CongViecResponse>> getCongViecBoPhanDuocGiao(@RequestParam("mabophan") int mabophan, @RequestParam("machucvu") int machucvu, @RequestParam("manhanvien") int manhanvien) {
@@ -256,28 +256,28 @@ public class CongViecController {
 
     }
 
-    @GetMapping("/{macongviec}")
-    ApiResponse<CongViecResponse> getId(@PathVariable("macongviec") String macongviec) {
-
-        try {
-            if (CheckToken.CheckHanToKen(request, authenticationService)) {
-                return ApiResponse.<CongViecResponse>builder()
-                        .result(congViecService.getCongViecByMaCongViec(macongviec))
-                        .code(HttpStatus.OK.value())
-                        .build();
-            } else {
-                return ApiResponse.<CongViecResponse>builder()
-                        .code(HttpStatus.UNAUTHORIZED.value())
-                        .build();
-            }
-        } catch (ParseException | JOSEException e) {
-            e.printStackTrace();
-            return ApiResponse.<CongViecResponse>builder()
-                    .message("Internal Server Error!")
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .build();
-        }
-    }
+//    @GetMapping("/{macongviec}")
+//    ApiResponse<CongViecResponse> getId(@PathVariable("macongviec") String macongviec) {
+//
+//        try {
+//            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+//                return ApiResponse.<CongViecResponse>builder()
+//                        .result(congViecService.getCongViecByMaCongViec(macongviec))
+//                        .code(HttpStatus.OK.value())
+//                        .build();
+//            } else {
+//                return ApiResponse.<CongViecResponse>builder()
+//                        .code(HttpStatus.UNAUTHORIZED.value())
+//                        .build();
+//            }
+//        } catch (ParseException | JOSEException e) {
+//            e.printStackTrace();
+//            return ApiResponse.<CongViecResponse>builder()
+//                    .message("Internal Server Error!")
+//                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                    .build();
+//        }
+//    }
 
     @DeleteMapping("/{userId}")
     ApiResponse<String> deleteUser(@PathVariable Long userId) {
