@@ -1,9 +1,6 @@
 package com.vttu.kpis.service;
 
-import com.vttu.kpis.dto.request.CongViecRequest;
-import com.vttu.kpis.dto.request.GiaHanRequest;
-import com.vttu.kpis.dto.request.PhanCongDonViRequest;
-import com.vttu.kpis.dto.request.PhanCongLanhDaoRequest;
+import com.vttu.kpis.dto.request.*;
 import com.vttu.kpis.dto.response.CongViecResponse;
 import com.vttu.kpis.entity.*;
 import com.vttu.kpis.exception.AppException;
@@ -37,11 +34,13 @@ public class CongViecService {
     PhanCongDonViRespository phanCongDonViRepository;
     PhanCongLanhDaoRepository phanCongLanhDaoRepository;
     NhomMucTieuResponsitory nhomMucTieuResponsitory;
+    PhanCongBoPhanResponsitory phanCongBoPhanResponsitory;
     TrangThaiCongViecResponsitory trangThaiCongViecResponsitory;
     KetQuaCongViecResponsitory ketQuaCongViecResponsitory;
     PhanCongNhanVienResponsitory phanCongNhanVienResponsitory;
     XacNhanRespository xacNhanRespository;
     GiaHanResponsitory giaHanResponsitory;
+    private final BoPhanResponsitory boPhanResponsitory;
 
     @Transactional(rollbackFor = Exception.class)
     public CongViecResponse createCongViec(CongViecRequest request){
@@ -191,6 +190,7 @@ public class CongViecService {
          nhomMucTieuResponsitory.findById(request.getNhomMucTieu().getManhom())
                  .orElseThrow(() -> new AppException(ErrorCode.Nhom_NOT_EXISTED));
 
+
         // Cập nhật thông tin công việc từ request
         congViec.setTencongviec(request.getTencongviec());
         congViec.setNgaybatdau(request.getNgaybatdau());
@@ -289,6 +289,144 @@ public class CongViecService {
                 }
         }
         congViec.setPhanCongDonVis(phanCongDonVis);
+
+        // Cập nhật tập hợp phân công lãnh đạo
+
+        for (PhanCongLanhDaoRequest list : request.getPhanCongLanhDaos()) {
+
+            PhanCongLanhDao phanCongLanhDao = phanCongLanhDaoRepository.listPhanCongLanhDaoByMaCongViecAnMaDonVi(macongviec,list.getNhanVien().getManhanvien());
+            PhanCongLanhDao phanCongLanhDaoNew = new PhanCongLanhDao();
+            if(phanCongLanhDao != null) {
+                phanCongLanhDao.setNhanVien(nhanVienRepository.findById(list.getNhanVien().getManhanvien())
+                        .orElseThrow(() -> new AppException(ErrorCode.NhanVien_NOT_EXISTED)));
+                phanCongLanhDao.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
+                        .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+                congViec.setPhanCongLanhDaos(phanCongLanhDaos);
+            }else {
+                phanCongLanhDaoNew.setCongViec(congViec);
+                phanCongLanhDaoNew.setNhanVien(nhanVienRepository.findById(list.getNhanVien().getManhanvien())
+                        .orElseThrow(() -> new AppException(ErrorCode.NhanVien_NOT_EXISTED)));
+                phanCongLanhDaoNew.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
+                        .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+                phanCongLanhDaos.add(phanCongLanhDaoNew);
+            }
+
+        }
+        congViec.setPhanCongLanhDaos(phanCongLanhDaos);
+
+        // Lưu CongViec và trả về CongViecResponse
+        return congViecMapper.toCongViecResponse(congViecResponsitory.save(congViec));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CongViecResponse updateCongViecGiaoBoPhan(String macongviec, CongViecRequest request) {
+        // Lấy đối tượng CongViec từ cơ sở dữ liệu dựa trên mã công việc
+        CongViec congViec = congViecResponsitory.findById(macongviec)
+                .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+        // Lấy MucTieu từ repository dựa trên mã mục tiêu từ request
+        mucTieuRepository.findById(request.getMucTieu().getMamuctieu())
+                .orElseThrow(() -> new AppException(ErrorCode.MucTieu_NOT_EXISTED));
+        nhomMucTieuResponsitory.findById(request.getNhomMucTieu().getManhom())
+                .orElseThrow(() -> new AppException(ErrorCode.Nhom_NOT_EXISTED));
+
+        // Cập nhật thông tin công việc từ request
+        congViec.setTencongviec(request.getTencongviec());
+        congViec.setNgaybatdau(request.getNgaybatdau());
+        congViec.setNgayketthucdukien(request.getNgayketthucdukien());
+        //   congViec.setTrangThaiCongViec(trangThaiCongViec);
+        congViec.setMacongvieccha(request.getMacongvieccha());
+        congViec.setMota(request.getMota());
+
+        // Cập nhật tập hợp phân công đơn vị
+        Set<PhanCongBoPhan> phanCongBoPhans = congViec.getPhanCongBoPhans();
+        //       Set<PhanCongDonViRequest> phancongdvrequest = request.getPhanCongDonVis();
+
+//        // Lấy các mã DonVi từ phancongdvrequest
+//        Set<Integer> maSetRequest = phancongdvrequest.stream()
+//                .map(requests -> requests.getDonVi().getMadonvi())
+//                .collect(Collectors.toSet());
+//
+//        // Lấy các phần tử không trùng trong phanCongDonVis
+//        Set<PhanCongBoPhan> nonDuplicatesInPhanCongBoPhans = phanCongBoPhans.stream()
+//                .filter(item -> !maSetRequest.contains(item.getBoPhan().getMabophan()))
+//                .collect(Collectors.toSet());
+//        // In kết quả
+//        System.out.println("Duplicates: " + nonDuplicatesInPhanCongBoPhans);
+
+        for (PhanCongBoPhan i : phanCongBoPhans){
+            int mabophan = i.getBoPhan().getMabophan();
+
+            Map<String,Object> trangthai = phanCongBoPhanResponsitory.findByTrangThaiCongViec(macongviec,mabophan);
+            Object maTrangThaiObj = trangthai.get("ma_trangthai");
+            if (maTrangThaiObj != null) {
+                int maTrangThai = Integer.parseInt(maTrangThaiObj.toString());
+                if (maTrangThai != 1) {
+                    throw new AppException(ErrorCode.CongViec_Dang_ThucHien_ERROR, "Tên bộ phận: " + i.getBoPhan().getTenbophan());
+                }
+            }
+            long check = phanCongBoPhanResponsitory.countByCheckTruocKhiXoa(macongviec,mabophan);
+            if(check > 0)
+                throw new AppException(ErrorCode.XoaBoPhan_PhanCong,"Bộ phận: " + i.getBoPhan().getTenbophan());
+            else
+                phanCongBoPhanResponsitory.deleteByMaCongViecAndMaBoPhan(macongviec,mabophan);
+        }
+
+        Set<PhanCongLanhDao> phanCongLanhDaos = congViec.getPhanCongLanhDaos();
+        Set<PhanCongLanhDaoRequest> phancongldrequest = request.getPhanCongLanhDaos();
+
+        Set<Integer>  maNvRequest = phancongldrequest.stream()
+                .map(requestld -> requestld.getNhanVien().getManhanvien())
+                .collect(Collectors.toSet());
+        Set<PhanCongLanhDao> nonDuplicatesInPhanCongLanhDaos = phanCongLanhDaos.stream()
+                .filter(item -> !maNvRequest.contains(item.getNhanVien().getManhanvien()))
+                .collect(Collectors.toSet());
+
+        for(PhanCongLanhDao i : nonDuplicatesInPhanCongLanhDaos){
+
+            int manhanvien = i.getNhanVien().getManhanvien();
+
+//            Map<String,Object> trangthai = phanCongNhanVienResponsitory.findByTrangThaiCongViec(macongviec,manhanvien);
+//             hỏi lại
+//            Object maTrangThaiObj = trangthai.get("ma_trangthai");
+//            if (maTrangThaiObj != null) {
+//                int maTrangThai = Integer.parseInt(maTrangThaiObj.toString());
+//                if (maTrangThai != 1) {
+//                    throw new AppException(ErrorCode.CongViec_Dang_ThucHien_ERROR, "Tên nhân viên: " + i.getNhanVien().getTennhanvien());
+//                }
+//            }
+
+            long check = phanCongLanhDaoRepository.countByCheckTruocKhiXoa(macongviec,manhanvien);
+
+            if(check > 0 )
+                throw new AppException(ErrorCode.XoaNhanVien_BanLanhDao);
+            else
+                phanCongLanhDaoRepository.deleteByMaCongViecAndMaNhanVien(macongviec, manhanvien);
+
+        }
+
+        for (PhanCongBoPhanRequest list : request.getPhanCongBoPhans()) {
+
+            // Kiểm tra xem phân công bộ phận đã tồn tại chưa
+            PhanCongBoPhan phanCongBoPhan = phanCongBoPhanResponsitory.listPhanCongCongViecByMaCongViecAnMaBoPhan(macongviec,list.getBoPhan().getMabophan());
+            PhanCongBoPhan phanCongBoPhanNew = new PhanCongBoPhan();
+            if(phanCongBoPhan != null){
+                phanCongBoPhan.setBoPhan(boPhanResponsitory.findById(list.getBoPhan().getMabophan())
+                        .orElseThrow(() -> new AppException(ErrorCode.BoPhan_NOT_EXISTED)));
+                phanCongBoPhan.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
+                        .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+                phanCongBoPhan.setThuchienchinh(true);
+                phanCongBoPhans.add(phanCongBoPhan);
+            }else {
+                phanCongBoPhanNew.setCongViec(congViec);
+                phanCongBoPhanNew.setBoPhan(boPhanResponsitory.findById(list.getBoPhan().getMabophan())
+                        .orElseThrow(() -> new AppException(ErrorCode.DonVi_NOT_EXISTED)));
+                phanCongBoPhanNew.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
+                        .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
+                phanCongBoPhanNew.setThuchienchinh(true);
+                phanCongBoPhans.add(phanCongBoPhanNew);
+            }
+        }
+        congViec.setPhanCongBoPhans(phanCongBoPhans);
 
         // Cập nhật tập hợp phân công lãnh đạo
 

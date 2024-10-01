@@ -229,6 +229,33 @@ public class CongViecController {
 
     }
 
+    @PutMapping("/cong-viec-giao-bo-phan/{macongviec}")
+    ApiResponse<CongViecResponse> updateCongViecGiaoBoPhan(
+            @PathVariable String macongviec,
+            @RequestBody @Valid CongViecRequest congViecRequest) {
+
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+                return ApiResponse.<CongViecResponse>builder()
+                        .result(congViecService.updateCongViecGiaoBoPhan(macongviec, congViecRequest))
+                        .message("Công việc được cập nhật thành công")
+                        .code(HttpStatus.OK.value())
+                        .build();
+            } else {
+                return ApiResponse.<CongViecResponse>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<CongViecResponse>builder()
+                    .message("Internal Server Error!")
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+
+    }
+
     @GetMapping("/{macongviec}")
     ApiResponse<CongViecResponse> getId(@PathVariable("macongviec") String macongviec) {
 
