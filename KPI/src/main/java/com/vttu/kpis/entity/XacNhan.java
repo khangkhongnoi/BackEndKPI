@@ -18,11 +18,11 @@ import java.time.LocalDateTime;
 public class XacNhan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long makhongxacnhan;
+    long maxacnhan;
     String noidung;
     boolean trangthai;
     LocalDateTime thoigian = LocalDateTime.now();
-
+    long maxacnhancha;
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "ma_congviec", nullable = false)

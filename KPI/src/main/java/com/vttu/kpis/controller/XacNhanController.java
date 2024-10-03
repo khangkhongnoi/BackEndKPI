@@ -3,6 +3,7 @@ package com.vttu.kpis.controller;
 import com.nimbusds.jose.JOSEException;
 import com.vttu.kpis.dto.response.ApiResponse;
 import com.vttu.kpis.dto.response.CongViecResponse;
+import com.vttu.kpis.entity.GiaHan;
 import com.vttu.kpis.entity.XacNhan;
 import com.vttu.kpis.responsitory.XacNhanRespository;
 import com.vttu.kpis.service.*;
@@ -50,11 +51,11 @@ public class XacNhanController {
         }
     }
     @PutMapping("xac-nhan-yeu-cau/{macongviec}")
-    ApiResponse<Boolean> XacNhanHoanThanhCongViec(@PathVariable String macongviec, @RequestParam boolean xacnhan, @RequestParam String noidung) {
+    ApiResponse<Boolean> XacNhanHoanThanhCongViec(@PathVariable String macongviec,@RequestParam long maxacnhancha ,@RequestParam boolean xacnhan, @RequestParam String noidung) {
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<Boolean>builder()
-                        .result(congViecService.XacNhanYeuCauHoanThanhCongViec(macongviec,xacnhan,noidung))
+                        .result(congViecService.XacNhanYeuCauHoanThanhCongViec(macongviec,xacnhan,noidung,maxacnhancha))
                         .code(HttpStatus.OK.value())
                         .message("Xác nhận yêu cầu thành công")
                         .build();
@@ -87,6 +88,29 @@ public class XacNhanController {
         } catch (ParseException | JOSEException e) {
             e.printStackTrace();
             return ApiResponse.<List<XacNhan>>builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
+    }
+
+    @GetMapping("/get-xac-nhan/{macongviec}")
+    ApiResponse<XacNhan> getXacNhan(@PathVariable("macongviec") String macongviec) {
+
+        try {
+            if (CheckToken.CheckHanToKen(request, authenticationService)) {
+                return ApiResponse.<XacNhan>builder()
+                        .result(xacNhanRespository.findXacNhanByThoigiantaoMaxAndMaCongViec(macongviec))
+                        .code(HttpStatus.OK.value())
+                        .build();
+            } else {
+                return ApiResponse.<XacNhan>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .build();
+            }
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
+            return ApiResponse.<XacNhan>builder()
+                    .message("Internal Server Error!")
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .build();
         }

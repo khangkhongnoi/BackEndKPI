@@ -43,7 +43,9 @@ public enum ErrorCode {
     PhanCongLanhDaoIsEmpty(1033, "Phân công lãnh đạo không được rỗng", HttpStatus.BAD_REQUEST),
     Error_Delete_CongViec(1034, "Không thể xóa công việc khi công việc con sinh ra", HttpStatus.BAD_REQUEST),
     XoaBoPhan_PhanCong(1035, "Không thể xóa do bộ phận đã tạo công việc con", HttpStatus.BAD_REQUEST),
-
+    EmTyMaXacNhan_Cha(1036, "Không tìm thấy mã gửi xác nhận", HttpStatus.BAD_REQUEST),
+    CongViec_Dang_ThucHien_ERRORUpdate(1037, "Công việc đang tiến hành không thể cập nhật",HttpStatus.BAD_REQUEST),
+    CongViec_Da_ThucHien_ERRORUpdate(1038, "Công việc đã hoàn thành không thể cập nhật",HttpStatus.BAD_REQUEST),
     ;
 
 

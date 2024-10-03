@@ -106,6 +106,11 @@ public class GiaoViecDonViService {
         // Lấy đối tượng CongViec từ cơ sở dữ liệu dựa trên mã công việc
         CongViec congViec = congViecResponsitory.findById(macongviec)
                 .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
+        int trangthaicongviec = congViec.getTrangThaiCongViec().getMatrangthai();
+        if(trangthaicongviec == 2)
+            throw new AppException(ErrorCode.CongViec_Dang_ThucHien_ERRORUpdate);
+        else if(trangthaicongviec == 3)
+            throw new AppException(ErrorCode.CongViec_Da_ThucHien_ERRORUpdate);
         // Lấy MucTieu từ repository dựa trên mã mục tiêu từ request
         MucTieu mucTieu = mucTieuRepository.findById(request.getMucTieu().getMamuctieu())
                 .orElseThrow(() -> new AppException(ErrorCode.MucTieu_NOT_EXISTED));

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -695,30 +696,40 @@ public class CongViecService {
         return phantram;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public boolean YeuCauXacNhan(String macongviec) {
             CongViec congViec = congViecResponsitory.findById(macongviec)
                     .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
             congViec.setYeucauxacnhan(true);
+            XacNhan xacNhan = new XacNhan();
+            xacNhan.setCongViec(congViec);
+            xacNhan.setThoigian(LocalDateTime.now());
+            xacNhan.setNoidung("Yêu cầu xác nhận");
+            xacNhan.setTrangthai(false);
+            xacNhan.setMaxacnhancha(0);
+            xacNhanRespository.save(xacNhan);
             congViecResponsitory.save(congViec);
         return  true;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean XacNhanYeuCauHoanThanhCongViec(String macongviec, boolean xacnhan, String noidung) {
+    public boolean XacNhanYeuCauHoanThanhCongViec(String macongviec, boolean xacnhan, String noidung, long maxacnhancha) {
         CongViec congViec = congViecResponsitory.findById(macongviec)
                 .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
-
+        if (maxacnhancha == 0)
+            throw new AppException(ErrorCode.EmTyMaXacNhan_Cha);
       if(xacnhan){
           congViec.setXacnhan(true);
           XacNhan xacNhan = new XacNhan();
-          xacNhan.setNoidung(noidung);
+          xacNhan.setNoidung("Đã xác nhận");
           xacNhan.setTrangthai(true);
           xacNhan.setCongViec(congViec);
+          xacNhan.setMaxacnhancha(maxacnhancha);
           xacNhanRespository.save(xacNhan);
           LocalDate ngayketthuc = congViec.getNgayketthucdukien();
           LocalDate ngayhientai = LocalDate.now();
           boolean trehan = false;
-          if (ngayketthuc.isAfter(ngayhientai)) {
+          if (ngayhientai.isAfter(ngayketthuc)) {
               System.out.println("Ngày kết thúc sau ngày hiện tại.");
               trehan = true;
               congViecResponsitory.updatecongvieckhitrehan(true,macongviec);
@@ -727,10 +738,12 @@ public class CongViecService {
           if(noidung == null){
               throw new AppException(ErrorCode.CongViec_NOT_EXISTED);
           }
+          congViec.setYeucauxacnhan(false);
             XacNhan xacNhan = new XacNhan();
           xacNhan.setNoidung(noidung);
           xacNhan.setTrangthai(false);
           xacNhan.setCongViec(congViec);
+          xacNhan.setMaxacnhancha(maxacnhancha);
           xacNhanRespository.save(xacNhan);
           return false;
       }
@@ -812,6 +825,7 @@ public class CongViecService {
         giaHan.setCongViec(congViec);
         giaHan.setThoigian(giaHanRequest.getThoigian());
         giaHan.setLydo(giaHanRequest.getLydo());
+        giaHan.setNguoitao(giaHanRequest.getNguoitao());
         giaHan.setTrangthai(false);
         giaHan.setMagiahancha(0);
         congViecResponsitory.yeucaugiahancongviec(true,giaHanRequest.getCongViec().getMacongviec());
@@ -825,6 +839,7 @@ public class CongViecService {
         GiaHan giaHan = new GiaHan();
         giaHan.setCongViec(congViec);
         giaHan.setThoigian(giaHanRequest.getThoigian());
+        giaHan.setNguoitao(giaHanRequest.getNguoitao());
 
         if(xacnhan){
             String macongviec = congViec.getMacongviec();

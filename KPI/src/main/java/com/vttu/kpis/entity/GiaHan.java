@@ -26,10 +26,12 @@ public class GiaHan {
     LocalDateTime thoigiantao = LocalDateTime.now();
     String lydo;
     boolean trangthai;
+    String nguoitao;
     long magiahancha;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "ma_congviec", nullable = false)
     @NotNull(message = "Công việc không được phép trống")
     CongViec congViec;
+
 }

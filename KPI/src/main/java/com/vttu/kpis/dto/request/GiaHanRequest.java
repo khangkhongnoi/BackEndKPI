@@ -18,6 +18,8 @@ public class GiaHanRequest {
     long magiahan;
     LocalDate thoigian;
     String lydo;
+    @NotNull(message = "Tên người tạo không được phép trống")
+    String nguoitao;
     long magiahancha;
     @NotNull(message = "Mã công việc không được phép trống")
     CongViec congViec;

@@ -144,4 +144,5 @@ public interface CongViecResponsitory extends JpaRepository<CongViec, String> {
 
   @Query(value = "select count(*) from cong_viec where cong_viec.macongvieccha =:macongviec",nativeQuery = true)
   long countByCheckTruocKhiXoa(@Param("macongviec") String macongviec);
+
 }
