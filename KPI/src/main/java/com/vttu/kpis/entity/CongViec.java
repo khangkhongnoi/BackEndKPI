@@ -84,4 +84,8 @@ public class CongViec {
     @OneToMany(mappedBy = "congViec", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<GiaHan> giaHans;
+
+    @OneToMany(mappedBy = "congViec" , cascade = CascadeType.ALL)
+    @JsonIgnore
+    Set<Files> files;
 }
