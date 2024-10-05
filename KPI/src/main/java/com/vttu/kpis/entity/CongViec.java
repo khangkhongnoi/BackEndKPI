@@ -21,6 +21,7 @@ public class CongViec {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String macongviec;
+    @Column(length = 500)
     String tencongviec;
     LocalDate ngaybatdau;
     LocalDate ngayketthucdukien;
@@ -30,6 +31,7 @@ public class CongViec {
     String macongvieccha;
     int ma_nguoitao;
     String ten_nguoitao;
+    @Column(length = 1000)
     String mota;
     Date thoigiantao = new Date();
     boolean xacnhan = false;

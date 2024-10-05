@@ -287,11 +287,11 @@ public class CongViecController {
 
 
     @PostMapping("/update-trang-thai-cong-viec/{macongviec}")
-    ApiResponse<Float> updatetrangthaicongviec(@RequestParam("matrangthai") int matrangthai, @PathVariable String macongviec) {
+    ApiResponse<Float> updatetrangthaicongviec(@RequestParam("matrangthai") int matrangthai, @RequestParam("manhanvien") int manhanvien,@PathVariable String macongviec) {
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<Float>builder()
-                        .result(congViecService.updatetrangthaicongviecService(macongviec, matrangthai))
+                        .result(congViecService.updatetrangthaicongviecService(macongviec, matrangthai,manhanvien))
                         .code(HttpStatus.OK.value())
                         .message("Cập nhật thành công")
                         .build();
@@ -332,11 +332,11 @@ public class CongViecController {
     }
 
     @PutMapping("/cap-nhat-phan-tram-ket-qua-cv/{macongviec}")
-    ApiResponse<Float> updateCapNhatCacheTinhKet(@PathVariable String macongviec, @RequestParam("phantram") float phantram) {
+    ApiResponse<Float> updateCapNhatCacheTinhKet(@PathVariable String macongviec, @RequestParam("phantram") float phantram, @RequestParam("manhanvien") int manhanvien) {
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<Float>builder()
-                        .result(congViecService.UpdateTuNhapKetQuaCongViec(macongviec, phantram))
+                        .result(congViecService.UpdateTuNhapKetQuaCongViec(macongviec, phantram,manhanvien))
                         .code(HttpStatus.OK.value())
                         .message("Cập nhật phần trăm kết quả thành công")
                         .build();

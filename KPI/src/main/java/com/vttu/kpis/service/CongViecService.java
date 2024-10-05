@@ -7,6 +7,9 @@ import com.vttu.kpis.exception.AppException;
 import com.vttu.kpis.exception.ErrorCode;
 import com.vttu.kpis.mapper.CongViecMapper;
 import com.vttu.kpis.responsitory.*;
+import com.vttu.kpis.responsitory.log.Log_PhanTramKetQuaSResponsitory;
+import com.vttu.kpis.responsitory.log.Log_TrangThaiCVResponsitory;
+import com.vttu.kpis.responsitory.log.Log_ThietLapCachTinhResponsitory;
 import com.vttu.kpis.utils.DateConverter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +44,11 @@ public class CongViecService {
     PhanCongNhanVienResponsitory phanCongNhanVienResponsitory;
     XacNhanRespository xacNhanRespository;
     GiaHanResponsitory giaHanResponsitory;
+    Log_TrangThaiCVResponsitory logTrangThaiCVResponsitory;
+    Log_ThietLapCachTinhResponsitory logThietLapCachTinhResponsitory;
+    Log_PhanTramKetQuaSResponsitory logPhanTramKetQuaSResponsitory;
     private final BoPhanResponsitory boPhanResponsitory;
+    private final Log_PhanTramKetQuaSResponsitory log_PhanTramKetQuaSResponsitory;
 
     @Transactional(rollbackFor = Exception.class)
     public CongViecResponse createCongViec(CongViecRequest request){
@@ -502,7 +509,7 @@ public class CongViecService {
     }
 
  //   @Transactional(rollbackFor = Exception.class)
-    public float updatetrangthaicongviecService(String macongviec, int matrangthai){
+    public float updatetrangthaicongviecService(String macongviec, int matrangthai, int manhanvien){
         CongViec congViecNhanVien = congViecResponsitory.findById(macongviec.trim())
                 .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
 
@@ -523,46 +530,15 @@ public class CongViecService {
             phantramhoanthanh = 100;
         }
         congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhoanthanh, macongviec);
-  //      float phantramhtcvcha = 0;
-        // từ công việc của nhân viên ta thực hiện tìm các công việc cha và update phần trăm hoàn thành theo kết quả
-//        while (congViecNhanVien != null) {
-//
-//            String macongvieccha = congViecNhanVien.getMacongvieccha();
-//            String macongvieccon = congViecNhanVien.getMacongviec();
-//            String xuat = congViecNhanVien.getMacongvieccha();
-//            if(macongvieccha.equals("0")){
-//                congViecNhanVien = congViecResponsitory.findById(macongvieccon)
-//                        .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
-//            }else {
-//                congViecNhanVien = congViecResponsitory.findById(macongvieccha)
-//                        .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
-//            }
-//
-//
-//            int ketquacvcha = congViecNhanVien.getKetQuaCongViec().getMaketqua();
-//            float tongphantram = 0;
-//            int soluong = 0;
-//            if(ketquacvcha == 2 ){
-//                    List<CongViec> congviecCha = congViecResponsitory.getCongViecConTheoMaCongViecChaGoc(macongvieccha);
-//                        for (CongViec cv : congviecCha){
-//                            List<CongViec> congviecCon = congViecResponsitory.getCongViecTheoMaCongViecGoc(cv.getMacongviec());
-//                            for (CongViec cvc : congviecCon){
-//                                soluong++;
-//                                tongphantram += cvc.getPhantramhoanthanh();
-//                            }
-//                            if (soluong > 0) {
-//                                phantramhtcvcha = tongphantram / soluong;
-//                                congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhtcvcha, macongvieccha);
-//                            }
-//                        }
-//
-//            }
-//            if (xuat.equals("0")) {
-//                break;
-//            }
-//        }
+
         tinhPhanTramHoanThanhNgucLen(macongviec);
 
+            Log_TrangThaiCongViec logTrangThaiCongViec = new Log_TrangThaiCongViec();
+
+        logTrangThaiCongViec.setMa_congviec(congViecNhanVien.getMacongviec());
+        logTrangThaiCongViec.setTrangthai(matrangthai);
+        logTrangThaiCongViec.setMa_nhanvien(manhanvien);
+            logTrangThaiCVResponsitory.save(logTrangThaiCongViec);
         return phantramhoanthanh;
     }
 
@@ -631,7 +607,8 @@ public class CongViecService {
                     phantramkq = 100;
                 congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramkq, macongviec);
             } else if (maketqua == 3) {
-                congViecResponsitory.updatePhanTramHoanThanhCongViec(0, macongviec);
+                phantramkq = 0;
+                congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramkq, macongviec);
             } else {
                 float tongphantram = 0;
                 List<CongViec> congViecs = congViecResponsitory.getCongViecConTheoMaCongViecCha(macongviec);
@@ -643,6 +620,7 @@ public class CongViecService {
                     congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramkq, macongviec);
                 }
             }
+
 
             tinhPhanTramHoanThanhNgucLen(macongviec);
         }else {
@@ -659,7 +637,8 @@ public class CongViecService {
                     phantramkq = 100;
                 congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramkq, macongviec);
             } else if (maketqua == 3) {
-                congViecResponsitory.updatePhanTramHoanThanhCongViec(0, macongviec);
+                phantramkq = 0;
+                congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramkq, macongviec);
             } else {
                 float tongphantram = 0;
                 List<CongViec> congViecs = congViecResponsitory.getCongViecConTheoMaCongViecCha(macongviec);
@@ -672,11 +651,18 @@ public class CongViecService {
                 }
             }
         }
+        Log_ThietLapCachTinh logThietLapCachTinh = new Log_ThietLapCachTinh();
+        logThietLapCachTinh.setMaketqua(maketqua);
+        logThietLapCachTinh.setMa_congviec(congViec.getMacongviec());
+        logThietLapCachTinh.setMa_nhanvien(2);
+        logThietLapCachTinh.setPhantram(phantramkq);
+        logThietLapCachTinhResponsitory.save(logThietLapCachTinh);
+
         return phantramkq;
 
     }
 
-    public float UpdateTuNhapKetQuaCongViec(String macongviec, float phantram) {
+    public float UpdateTuNhapKetQuaCongViec(String macongviec, float phantram, int manhanvien) {
 
       CongViec cv =  congViecResponsitory.findById(macongviec).orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
         CongViec congvieccha = congViecResponsitory.findByMacongviec(cv.getMacongvieccha())
@@ -693,6 +679,15 @@ public class CongViecService {
             congViecResponsitory.updatePhanTramKetQuaCongViec(phantram,macongviec);
         }
         tinhPhanTramHoanThanhNgucLen(macongviec);
+
+        Log_PhanTramKetQuaS logPhanTramKetQuaS = new Log_PhanTramKetQuaS();
+        logPhanTramKetQuaS.setMa_congviec(macongviec);
+        logPhanTramKetQuaS.setMa_nhanvien(manhanvien);
+        logPhanTramKetQuaS.setPhantram(phantram);
+        logPhanTramKetQuaS.setThutu(0);
+
+        log_PhanTramKetQuaSResponsitory.save(logPhanTramKetQuaS);
+
         return phantram;
     }
 

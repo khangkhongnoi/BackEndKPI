@@ -11,6 +11,7 @@ import com.vttu.kpis.exception.ErrorCode;
 import com.vttu.kpis.mapper.CongViecMapper;
 import com.vttu.kpis.responsitory.*;
 import com.vttu.kpis.responsitory.giaoviec.GiaoViecDonVịResponsitory;
+import com.vttu.kpis.responsitory.log.Log_GiaoViecResponsitory;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -41,6 +42,8 @@ public class GiaoViecDonViService {
     NhomMucTieuResponsitory nhomMucTieuResponsitory;
     PhanCongLanhDaoRepository phanCongLanhDaoRepository;
     PhanCongDonViRespository phanCongDonViRepository;
+    Log_GiaoViecResponsitory logGiaoViecResponsitory;
+    private final Log_GiaoViecResponsitory log_GiaoViecResponsitory;
 
     @Transactional(rollbackFor = Exception.class)
     public CongViecResponse createCongViecGiaoDonVi(CongViecRequest request){
@@ -63,6 +66,8 @@ public class GiaoViecDonViService {
         if(request.getPhanCongDonVis().isEmpty())
             throw new AppException(ErrorCode.PhanCongDonViIsEmpty);
         // Xử lý phân công đơn vị từ request
+        StringBuilder madonvithuchien = new StringBuilder();
+        StringBuilder madonviphohop =  new StringBuilder();
         for (PhanCongDonViRequest list : request.getPhanCongDonVis()) {
             PhanCongDonVi phanCongDonVi = new PhanCongDonVi();
             phanCongDonVi.setCongViec(congViec);
@@ -72,8 +77,12 @@ public class GiaoViecDonViService {
                     .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
             phanCongDonVi.setThuchienchinh(list.isThuchienchinh());
             phanCongDonVis.add(phanCongDonVi);
+            if(list.isThuchienchinh())
+                madonvithuchien.append("{Mã Đơn Vị:").append(list.getDonVi().getMadonvi()).append("_Mã Quyền:").append(list.getQuyen().getMaquyen()).append("}_");
+            else
+                madonviphohop.append("{Mã Đơn Vị:").append(list.getDonVi().getMadonvi()).append("_Mã Quyền:").append(list.getQuyen().getMaquyen()).append("}_");
         }
-
+            StringBuilder mabanlanhdao = new StringBuilder();
         // Xử lý phân công lãnh đạo từ request
         for (PhanCongLanhDaoRequest list : request.getPhanCongLanhDaos()) {
             PhanCongLanhDao phanCongLanhDao = new PhanCongLanhDao();
@@ -83,6 +92,7 @@ public class GiaoViecDonViService {
             phanCongLanhDao.setQuyen(quyenRepository.findById(list.getQuyen().getMaquyen())
                     .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
             phanCongLanhDaos.add(phanCongLanhDao);
+            mabanlanhdao.append("{Mã Nhân Viên:").append(list.getNhanVien().getManhanvien()).append("_Mã Quyền:").append(list.getQuyen().getMaquyen()).append("}_");
         }
         // Gán MucTieu, PhanCongDonVi và PhanCongLanhDao cho CongViec
 
@@ -98,7 +108,21 @@ public class GiaoViecDonViService {
         ketQuaCongViec.setMaketqua(1);
         congViec.setKetQuaCongViec(ketQuaCongViec);
         // Lưu CongViec và trả về CongViecResponse
-        return congViecMapper.toCongViecResponse(giaoViecDonVịResponsitory.save(congViec));
+        CongViec savedCongViec = giaoViecDonVịResponsitory.save(congViec);
+
+        Log_GiaoViec logGiaoViec = new Log_GiaoViec();
+        logGiaoViec.setLog_noidung("(Mã Mục Tiêu:" + mucTieu.getMamuctieu() + ")_(Mã Nhóm:" + nhomMucTieu.getManhom() +
+                ")_(Ban Lanh Đạo:[" + mabanlanhdao + "])_(Đơn Vị Thực Hiện:[" + madonvithuchien + "])_(Đơn Vị Phối Hợp:[" +
+                madonviphohop + "])_(Tên Công Việc:" + savedCongViec.getTencongviec() + ")_(Ngày Bắt Đầu:" + savedCongViec.getNgaybatdau() +
+                ")_(Ngày Kết Thúc:" + savedCongViec.getNgayketthucdukien() + ")_(Trọng Số:" + savedCongViec.getTrongso() + ")_(Mô Tả:" + savedCongViec.getMota() + ")");
+        logGiaoViec.setMa_congviec(savedCongViec.getMacongviec());
+        logGiaoViec.setMa_nhanvien(savedCongViec.getMa_nguoitao());
+        HanhDong hanhDong = new HanhDong();
+        hanhDong.setMahanhdong(1);
+        logGiaoViec.setHanhDong(hanhDong);
+        logGiaoViecResponsitory.save(logGiaoViec);
+
+        return congViecMapper.toCongViecResponse(savedCongViec);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -194,6 +218,9 @@ public class GiaoViecDonViService {
 
         }
 
+        StringBuilder madonvithuchien = new StringBuilder();
+        StringBuilder madonviphohop =  new StringBuilder();
+
         for (PhanCongDonViRequest list : request.getPhanCongDonVis()) {
 
             // Kiểm tra xem phân công đơn vị đã tồn tại chưa
@@ -215,11 +242,15 @@ public class GiaoViecDonViService {
                 phanCongDonViNew.setThuchienchinh(list.isThuchienchinh());
                 phanCongDonVis.add(phanCongDonViNew);
             }
+            if(list.isThuchienchinh())
+                madonvithuchien.append("{Mã Đơn Vị:").append(list.getDonVi().getMadonvi()).append("_Mã Quyền:").append(list.getQuyen().getMaquyen()).append("}_");
+            else
+                madonviphohop.append("{Mã Đơn Vị:").append(list.getDonVi().getMadonvi()).append("_Mã Quyền:").append(list.getQuyen().getMaquyen()).append("}_");
         }
         congViec.setPhanCongDonVis(phanCongDonVis);
 
         // Cập nhật tập hợp phân công lãnh đạo
-
+        StringBuilder mabanlanhdao = new StringBuilder();
         for (PhanCongLanhDaoRequest list : request.getPhanCongLanhDaos()) {
 
             PhanCongLanhDao phanCongLanhDao = phanCongLanhDaoRepository.listPhanCongLanhDaoByMaCongViecAnMaDonVi(macongviec,list.getNhanVien().getManhanvien());
@@ -238,16 +269,29 @@ public class GiaoViecDonViService {
                         .orElseThrow(() -> new AppException(ErrorCode.Quyen_NOT_EXISTED)));
                 phanCongLanhDaos.add(phanCongLanhDaoNew);
             }
-
+            mabanlanhdao.append("{Mã Nhân Viên:").append(list.getNhanVien().getManhanvien()).append("_Mã Quyền:").append(list.getQuyen().getMaquyen()).append("}_");
         }
         congViec.setPhanCongLanhDaos(phanCongLanhDaos);
+        CongViec updateCongViec = congViecResponsitory.save(congViec);
+
+        Log_GiaoViec logGiaoViec = new Log_GiaoViec();
+        logGiaoViec.setLog_noidung("(Mã Mục Tiêu:" + mucTieu.getMamuctieu() + ")_(Mã Nhóm:" + nhomMucTieu.getManhom() +
+                ")_(Ban Lanh Đạo:[" + mabanlanhdao + "])_(Đơn Vị Thực Hiện:[" + madonvithuchien + "])_(Đơn Vị Phối Hợp:[" +
+                madonviphohop + "])_(Tên Công Việc:" + updateCongViec.getTencongviec() + ")_(Ngày Bắt Đầu:" + updateCongViec.getNgaybatdau() +
+                ")_(Ngày Kết Thúc:" + updateCongViec.getNgayketthucdukien() + ")_(Trọng Số:" + updateCongViec.getTrongso() + ")_(Mô Tả:" + updateCongViec.getMota() + ")");
+        logGiaoViec.setMa_congviec(updateCongViec.getMacongviec());
+        logGiaoViec.setMa_nhanvien(updateCongViec.getMa_nguoitao());
+        HanhDong hanhDong = new HanhDong();
+        hanhDong.setMahanhdong(2);
+        logGiaoViec.setHanhDong(hanhDong);
+        logGiaoViecResponsitory.save(logGiaoViec);
 
         // Lưu CongViec và trả về CongViecResponse
-        return congViecMapper.toCongViecResponse(congViecResponsitory.save(congViec));
+        return congViecMapper.toCongViecResponse(updateCongViec);
     }
 
-
-    public boolean xoaCongViecGiaoDonVi(String macongviec) {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean xoaCongViecGiaoDonVi(String macongviec,int manhanvien) {
         congViecResponsitory.findById(macongviec)
                 .orElseThrow(() -> new AppException(ErrorCode.CongViec_NOT_EXISTED));
 
@@ -276,6 +320,14 @@ public class GiaoViecDonViService {
             congViecResponsitory.deleteCongViec(macongviec);
         }
 
+        Log_GiaoViec logGiaoViec = new Log_GiaoViec();
+        logGiaoViec.setLog_noidung("");
+        logGiaoViec.setMa_congviec(macongviec);
+        logGiaoViec.setMa_nhanvien(manhanvien);
+        HanhDong hanhDong = new HanhDong();
+        hanhDong.setMahanhdong(3);
+        logGiaoViec.setHanhDong(hanhDong);
+        logGiaoViecResponsitory.save(logGiaoViec);
         return  true;
     }
 }

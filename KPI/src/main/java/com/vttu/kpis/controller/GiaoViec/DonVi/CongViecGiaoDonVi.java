@@ -147,11 +147,11 @@ public class CongViecGiaoDonVi {
     }
 
     @DeleteMapping("/xoa-cong-viec-giao-don-vi/{macongviec}")
-    ApiResponse<Boolean> xoaCongViecGiaoDonVi(@PathVariable String macongviec) {
+    ApiResponse<Boolean> xoaCongViecGiaoDonVi(@PathVariable String macongviec, @RequestParam int manhanvien) {
         try {
             if (CheckToken.CheckHanToKen(request, authenticationService)) {
                 return ApiResponse.<Boolean>builder()
-                        .result(giaoViecDonViService.xoaCongViecGiaoDonVi(macongviec))
+                        .result(giaoViecDonViService.xoaCongViecGiaoDonVi(macongviec,manhanvien))
                         .code(HttpStatus.OK.value())
                         .message("Xóa công việc thành công")
                         .build();
