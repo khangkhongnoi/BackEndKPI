@@ -1,5 +1,6 @@
 package com.vttu.kpis.service;
 
+import com.nimbusds.jose.shaded.gson.Gson;
 import com.vttu.kpis.dto.request.*;
 import com.vttu.kpis.dto.response.CongViecResponse;
 import com.vttu.kpis.entity.*;
@@ -11,10 +12,12 @@ import com.vttu.kpis.responsitory.log.Log_PhanTramKetQuaSResponsitory;
 import com.vttu.kpis.responsitory.log.Log_TrangThaiCVResponsitory;
 import com.vttu.kpis.responsitory.log.Log_ThietLapCachTinhResponsitory;
 import com.vttu.kpis.utils.DateConverter;
+import com.vttu.kpis.utils.SendMail;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +50,13 @@ public class CongViecService {
     Log_TrangThaiCVResponsitory logTrangThaiCVResponsitory;
     Log_ThietLapCachTinhResponsitory logThietLapCachTinhResponsitory;
     Log_PhanTramKetQuaSResponsitory logPhanTramKetQuaSResponsitory;
+    EmailService emailService;
     private final BoPhanResponsitory boPhanResponsitory;
     private final Log_PhanTramKetQuaSResponsitory log_PhanTramKetQuaSResponsitory;
+
+
+    KafkaTemplate<String, String> kafkaTemplate;
+    static final String TOPIC = "email_topic";
 
     @Transactional(rollbackFor = Exception.class)
     public CongViecResponse createCongViec(CongViecRequest request){
@@ -528,8 +536,23 @@ public class CongViecService {
 
         if (ketquacanhan == 1 && matrangthai == 3) {
             phantramhoanthanh = 100;
+            congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhoanthanh, macongviec);
         }
-        congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhoanthanh, macongviec);
+        float phantramht = 0;
+        int soluong = 0;
+        if(ketquacanhan == 2){
+            List<CongViec> congviecCha = congViecResponsitory.getCongViecConTheoMaCongViecCha(macongviec);
+                for(CongViec congviec : congviecCha){
+                    phantramht += congviec.getPhantramhoanthanh();
+                    soluong++;
+                }
+                if(soluong > 0)
+                {
+                    phantramhoanthanh = phantramht / soluong;
+                    congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhoanthanh, macongviec);
+                }
+        }
+//        congViecResponsitory.updatePhanTramHoanThanhCongViec(phantramhoanthanh, macongviec);
 
         tinhPhanTramHoanThanhNgucLen(macongviec);
 
@@ -826,7 +849,10 @@ public class CongViecService {
         congViecResponsitory.yeucaugiahancongviec(true,giaHanRequest.getCongViec().getMacongviec());
         giaHanResponsitory.save(giaHan);
 
+       if(emailService.sendMail(congViec.getMa_nguoitao(),
+               "Yêu cầu gia hạn công việc", "Gia hạn công việc: " + congViec.getTencongviec() + " Ngày gia hạn: " +  giaHanRequest.getThoigian()))
         return  true;
+       else return false;
     }
     public boolean XacNhanYeuCauGiaHanCongViec(GiaHanRequest giaHanRequest,boolean xacnhan, String lydokhonggiahan){
         CongViec congViec = congViecResponsitory.findById(giaHanRequest.getCongViec().getMacongviec())
@@ -835,8 +861,9 @@ public class CongViecService {
         giaHan.setCongViec(congViec);
         giaHan.setThoigian(giaHanRequest.getThoigian());
         giaHan.setNguoitao(giaHanRequest.getNguoitao());
-
+        String xacnhanstring = "";
         if(xacnhan){
+            xacnhanstring = "Đồng ý";
             String macongviec = congViec.getMacongviec();
             if(!congViec.getMacongvieccha().equals("0") )
                 macongviec = congViec.getMacongvieccha();
@@ -850,6 +877,7 @@ public class CongViecService {
             congViecResponsitory.updatecongvieckhixacnhangiahan(xacnhan, giaHanRequest.getThoigian(),giaHanRequest.getCongViec().getMacongviec());
             giaHan.setLydo(giaHanRequest.getLydo());
         }else {
+            xacnhanstring = "Không đồng ý, lý do: " + lydokhonggiahan;
             if(lydokhonggiahan.isEmpty())
                 throw new AppException(ErrorCode.LyDo_Is_Empty);
             giaHan.setLydo(lydokhonggiahan);
@@ -862,7 +890,12 @@ public class CongViecService {
         giaHan.setTrangthai(xacnhan);
         giaHan.setMagiahancha(giaHanRequest.getMagiahan());
         giaHanResponsitory.save(giaHan);
-        
-        return true;
+
+
+        if(emailService.sendMail(congViec.getMa_nguoitao(),
+                "Xác nhận yêu cầu gia hạn công việc", "Xác nhận gia hạn công việc: " + congViec.getTencongviec() + " Ngày gia hạn: " +  giaHanRequest.getThoigian() + ". " + xacnhanstring))
+            return  true;
+        else return false;
+
     }
 }

@@ -38,7 +38,7 @@ public class TaiKhoanController {
     HttpServletRequest request;
     AuthenticationService authenticationService;
 
-    @GetMapping("'list")
+    @GetMapping("list")
     ApiResponse<List<Map<String,Object>>> listtaikhoan() {
 
         try{

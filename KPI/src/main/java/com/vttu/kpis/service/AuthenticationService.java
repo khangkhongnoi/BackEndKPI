@@ -1,5 +1,6 @@
 package com.vttu.kpis.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -7,15 +8,15 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.vttu.kpis.dto.request.AuthenticationRequest;
 import com.vttu.kpis.dto.request.IntrospectRequest;
+import com.vttu.kpis.dto.request.LogoutRequest;
 import com.vttu.kpis.dto.response.AuthenticationResponse;
 import com.vttu.kpis.dto.response.IntrospectResponse;
-import com.vttu.kpis.entity.NhanVien_ChucVu;
-import com.vttu.kpis.entity.Permission;
-import com.vttu.kpis.entity.Role;
-import com.vttu.kpis.entity.TaiKhoan;
+import com.vttu.kpis.entity.*;
 import com.vttu.kpis.exception.AppException;
 import com.vttu.kpis.exception.ErrorCode;
+import com.vttu.kpis.responsitory.InvalidatedTokenResponsitory;
 import com.vttu.kpis.responsitory.NhanVien_ChucVuReponsitory;
+import com.vttu.kpis.responsitory.TaiKhoanPermissionResponsitory;
 import com.vttu.kpis.responsitory.TaiKhoanRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +43,8 @@ public class AuthenticationService {
 
     TaiKhoanRepository taiKhoanRepository;
     NhanVien_ChucVuReponsitory nhanVienChucVuReponsitory;
+    TaiKhoanPermissionResponsitory taiKhoanPermissionResponsitory;
+    InvalidatedTokenResponsitory invalidatedTokenResponsitory;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -131,6 +131,7 @@ public IntrospectResponse introspect(IntrospectRequest request) throws ParseExce
                 .claim("tennhanvien", taiKhoan.getNhanVien().getTennhanvien())
                 .claim("madonvi", madonvi)
                 .claim("mabophan", mabophan)
+                .claim("permissions", buildPermisson(taiKhoan.getMataikhoan()))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header,payload);
@@ -155,6 +156,48 @@ public IntrospectResponse introspect(IntrospectRequest request) throws ParseExce
             });
         return stringJoiner.toString();
 
+    }
+
+    private String buildPermisson(int taikhoan_id) {
+        // Lấy danh sách quyền từ cơ sở dữ liệu
+        List<Map<String, Object>> getdPermission = taiKhoanPermissionResponsitory.getThongTinTaiKhoanByID(taikhoan_id);
+
+        // Tạo một Map để nhóm các quyền con theo quyền cha
+        Map<String, List<String>> permissionsMap = new HashMap<>();
+
+        for (Map<String, Object> row : getdPermission) {
+            String permissionParent = (String) row.get("permission_parent");  // "NHAN_VIEC"
+            String permissionChild = (String) row.get("permission_child");    // "CA_NHAN_NHAN_VIEC" or "DON_VI_NHAN_VIEC"
+
+            // Nếu quyền cha chưa có trong map, thêm một danh sách rỗng
+            permissionsMap.computeIfAbsent(permissionParent, k -> new ArrayList<>());
+
+            // Thêm quyền con vào danh sách quyền cha
+            permissionsMap.get(permissionParent).add(permissionChild);
+        }
+
+        // Chuyển Map thành JSON
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonPermissions = objectMapper.writeValueAsString(permissionsMap);
+            return jsonPermissions;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signToken = verifytoken(request.getToken());
+
+        String jit = signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expirytime(expiryTime)
+                .build();
+        invalidatedTokenResponsitory.save(invalidatedToken);
     }
 
     private SignedJWT verifytoken(String token) throws JOSEException, ParseException {

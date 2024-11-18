@@ -36,4 +36,18 @@ public class TaiKhoan {
     )
     Set<Role> roles = new HashSet<>();
 
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+            name = "taikhoan_permission",
+            joinColumns = @JoinColumn(name = "taikhoan_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    Set<Permission> permissions = new HashSet<>();
+
+
+
+    @OneToMany(mappedBy = "taiKhoan", fetch = FetchType.LAZY)
+    @JsonIgnore
+    Set<TaiKhoanPermission> tkPermissonS = new HashSet<>();
 }

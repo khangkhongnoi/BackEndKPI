@@ -1,5 +1,6 @@
 package com.vttu.kpis.config;
 
+import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -24,7 +26,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final String [] PUBLIC_ENDPOINTS = {
-            "/auth/log-in","auth/token-theo-chuc-vu/**","/auth/introspect",
+            "/auth/log-in","auth/token-theo-chuc-vu/**","/auth/introspect","/auth/logout",
     };
     private final  String [] PUBLIC_GET = {
             "/taikhoan/**", "/quyen", "/trangthai"

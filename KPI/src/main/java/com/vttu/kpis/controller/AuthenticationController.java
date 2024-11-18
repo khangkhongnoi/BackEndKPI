@@ -3,6 +3,7 @@ package com.vttu.kpis.controller;
 import com.nimbusds.jose.JOSEException;
 import com.vttu.kpis.dto.request.AuthenticationRequest;
 import com.vttu.kpis.dto.request.IntrospectRequest;
+import com.vttu.kpis.dto.request.LogoutRequest;
 import com.vttu.kpis.dto.response.ApiResponse;
 import com.vttu.kpis.dto.response.AuthenticationResponse;
 import com.vttu.kpis.dto.response.IntrospectResponse;
@@ -48,4 +49,9 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
+    }
 }

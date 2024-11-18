@@ -4,7 +4,6 @@ package com.vttu.kpis.controller.NhanViec.DonVi;
 import com.nimbusds.jose.JOSEException;
 import com.vttu.kpis.dto.response.ApiResponse;
 import com.vttu.kpis.dto.response.CongViecResponse;
-import com.vttu.kpis.entity.CongViec;
 import com.vttu.kpis.service.AuthenticationService;
 import com.vttu.kpis.service.CongViecService;
 import com.vttu.kpis.service.nhanviec.NhanViecDonViServer;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequestMapping("/congviec/nhanviec/donvi")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CongViecNhanDonVi {
+public class DonViNhanViec {
 
     HttpServletRequest request;
     AuthenticationService authenticationService;

@@ -1,5 +1,6 @@
 package com.vttu.kpis.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -27,5 +28,13 @@ public class Permission {
             inverseJoinColumns = @JoinColumn(name = "role_name")
     )
     Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "permission")
+    @JsonIgnore
+    Set<Permission_Con> permissionCons;
+
+    @OneToMany(mappedBy = "permission")
+    @JsonIgnore
+    Set<TaiKhoanPermission> tkPermissonS;
 
 }
