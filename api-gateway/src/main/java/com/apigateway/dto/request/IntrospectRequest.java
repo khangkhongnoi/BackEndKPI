@@ -1,4 +1,5 @@
-package com.example.apigateway.dto.request;
+package com.apigateway.dto.request;
+
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,5 +10,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class IntrospectRequest {
+
     String token;
 }

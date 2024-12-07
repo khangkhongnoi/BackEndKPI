@@ -1,9 +1,9 @@
-package com.example.apigateway.service;
+package com.apigateway.service;
 
-import com.example.apigateway.dto.ApiResponse;
-import com.example.apigateway.dto.request.IntrospectRequest;
-import com.example.apigateway.dto.response.IntrospectResponse;
-import com.example.apigateway.repository.KpiClient;
+import com.apigateway.dto.ApiResponse;
+import com.apigateway.dto.request.IntrospectRequest;
+import com.apigateway.dto.response.IntrospectResponse;
+import com.apigateway.repository.KPIClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,13 +13,12 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class KpiService {
+public class KPIService {
 
-    KpiClient kpiClient;
+    KPIClient KPIClient;
 
     public Mono<ApiResponse<IntrospectResponse>> introspect(String token) {
-
-        return kpiClient.introspect(IntrospectRequest.builder()
+        return KPIClient.introspect(IntrospectRequest.builder()
                         .token(token)
                 .build());
     }

@@ -1,7 +1,8 @@
-package com.example.apigateway.configuration;
+package com.apigateway.configuration;
 
-import com.example.apigateway.dto.ApiResponse;
-import com.example.apigateway.service.KpiService;
+
+import com.apigateway.dto.ApiResponse;
+import com.apigateway.service.KPIService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -32,36 +34,44 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationFilter implements GlobalFilter, Ordered {
 
-    KpiService kpiService;
+    KPIService KPIService;
     ObjectMapper objectMapper;
 
-    String[] publicEndpoints = {"/kpi/auth/.*"};
+
+    // Tạo biến chung cho phần tiền tố
+    String BASE_PATH_KPI_CV = "/kpi-cong-viec";
+
+    String[] publicEndpoints = {BASE_PATH_KPI_CV +"/auth/.*", BASE_PATH_KPI_CV+"/quoctich/list",
+
+            BASE_PATH_KPI_CV + "/taikhoan/.*", BASE_PATH_KPI_CV + "/quyen",BASE_PATH_KPI_CV + "/trangthai",
+
+    };
+
 
     @Value("${app.api-prefix}")
     @NonFinal
     private String apiPrefixl;
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println("Enter authentication filter");
+
 
         if(isPublicEndpoint(exchange.getRequest()))
-           return chain.filter(exchange);
+            return chain.filter(exchange);
 
         // get token from authorization header
-         List<String> authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
-         if (CollectionUtils.isEmpty(authHeader))
-                 return uauthentication(exchange.getResponse());
+        List<String> authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
+        if (CollectionUtils.isEmpty(authHeader))
+            return uauthentication(exchange.getResponse());
 
-         String token = authHeader.getFirst().replace("Bearer ", "");
-         System.out.println("token: " + token);
+        String token = authHeader.get(0).replace("Bearer ", "");
 
-         return  kpiService.introspect(token).flatMap(introspectResponseApiResponse -> {
-             if (introspectResponseApiResponse.getResult().isValid())
-                 return chain.filter(exchange);
-             else {
-                 return uauthentication(exchange.getResponse());
-             }
-         }).onErrorResume(throwable -> uauthentication(exchange.getResponse()));
+        return  KPIService.introspect(token).flatMap(introspectResponseApiResponse -> {
+            if (introspectResponseApiResponse.getResult().isValid())
+                return chain.filter(exchange);
+            else {
+                return uauthentication(exchange.getResponse());
+            }
+        }).onErrorResume(throwable -> uauthentication(exchange.getResponse()));
 
     }
 
@@ -70,25 +80,31 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         return -1;
     }
 
+
     private boolean isPublicEndpoint(ServerHttpRequest request) {
-           return Arrays.stream(publicEndpoints)
-                   .anyMatch(s -> request.getURI().getPath().matches(apiPrefixl + s));
+        return Arrays.stream(publicEndpoints)
+                .anyMatch(s -> request.getURI().getPath().matches(apiPrefixl + s));
     }
 
-    Mono<Void> uauthentication(ServerHttpResponse response)  {
+
+    Mono<Void> uauthentication(ServerHttpResponse response){
         ApiResponse<?> apiResponse = ApiResponse.builder()
                 .code(1401)
                 .message("Uauthentication")
                 .build();
         String body = null;
-        try {
+
+        try{
             body = objectMapper.writeValueAsString(apiResponse);
-        } catch (JsonProcessingException e) {
+        }
+        catch (JsonProcessingException e){
             throw new RuntimeException(e);
         }
+
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
         return response.writeWith(
-                Mono.just(response.bufferFactory().wrap(body.getBytes())));
+                Mono.just(response.bufferFactory().wrap(body.getBytes()))
+        );
     }
 }

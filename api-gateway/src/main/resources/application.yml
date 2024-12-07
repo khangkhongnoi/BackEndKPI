@@ -1,18 +1,26 @@
 server:
-    port: 8888
+    port: 9999
 
 app:
-  api-prefix: /api
+    api-prefix: /api
 
+kpi_cong_viec_url: ${KPI_CONG_VIEC_IP:localhost}:8210
 spring:
+    main:
+        web-application-type: reactive
     application:
         name: api-gateway
     cloud:
         gateway:
             routes:
-                - id: kpi
-                  uri: http://localhost:8081
+                - id: kpi_cong_viec
+                  uri: http://${KPI_CONG_VIEC_IP:localhost}:8210
                   predicates:
-                      - Path=${app.api-prefix}/kpi/**
+                      - Path=${app.api-prefix}/kpi-cong-viec/**
                   filters:
-                    - StripPrefix=1
+                      - StripPrefix=1
+                      - name: RequestRateLimiter
+                        args:
+                            redis-rate-limiter.replenishRate: 10        # Số lượng request tối đa mỗi giây
+                            redis-rate-limiter.burstCapacity: 20        # Giới hạn burst
+                            key-resolver: '#{@ipKeyResolver}'
